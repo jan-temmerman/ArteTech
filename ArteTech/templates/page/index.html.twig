@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PageController!{% endblock %}
+
+{% block body %}
+    <h1>Admins</h1>
+
+    {% for user in users %}
+    <p>{{ user.firstName }} {{ user.lastName }}</p>
+    {% endfor %}
+{% endblock %}
