@@ -1,5 +1,23 @@
 .content-container
-    width: 100%
+    width: calc(100% - 240px)
     height: 100%
     margin-left: 240px
     padding: 20px 40px
+    -webkit-box-sizing: border-box /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box /* Firefox, other Gecko */
+    box-sizing: border-box
+
+.users-container
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax(440px, 1fr))
+    grid-gap: 20px
+
+    div
+        background-color: $secundary_light
+        min-height: 200px
+        color: $main_dark
+        padding: 20px
+        border-radius: 4px
+
+        p
+            margin-left: 20px

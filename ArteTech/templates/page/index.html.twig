@@ -3,9 +3,20 @@
 {% block title %}Hello PageController!{% endblock %}
 
 {% block body %}
-    <h1>Admins</h1>
 
-    {% for user in users %}
-    <p>{{ user.firstName }} {{ user.lastName }}</p>
+    <h1>Users</h1>
+
+    <div class="users-container">
+    {% for status in statuses %}
+        <div >
+            <h2>{{ status.status|capitalize }}s</h2>
+            {% for user in status.users %}
+                <p>{{ user.firstName }} {{ user.lastName }}</p>
+            {% endfor %}
+        </div>
     {% endfor %}
+    </div>
+
+    {#{{ form(form) }}#}
+
 {% endblock %}

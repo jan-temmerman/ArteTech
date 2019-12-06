@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\UserStatus;
 use phpDocumentor\Reflection\Types\Integer;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +26,7 @@ class PageController extends AbstractController
         $repository = $this->getDoctrine()->getRepository(User::class);
         $users = $repository->findAll();
 
-        /*$repository = $this->getDoctrine()->getRepository(UserStatus::class);
+        $repository = $this->getDoctrine()->getRepository(UserStatus::class);
         $statuses = $repository->findAll();
         $status = $statuses[0];
 
@@ -35,6 +36,11 @@ class PageController extends AbstractController
         $form = $this->createFormBuilder($user)
             ->add('firstName', TextType::class)
             ->add('lastName', TextType::class)
+            ->add('status', EntityType::class, [
+                'class' => UserStatus::class,
+                'choice_label' => function ($status) {
+                    return ucfirst($status->getStatus());
+                }])
             ->add('save', SubmitType::class, ['label' => 'Save user'])
             ->getForm();
 
@@ -47,11 +53,12 @@ class PageController extends AbstractController
             $entityManager->flush();
 
             return $this->redirect("/");
-        }*/
+        }
 
         return $this->render('page/index.html.twig', [
             'users' => $users,
-            //'form' => $form->createView(),
+            'statuses' => $statuses,
+            'form' => $form->createView(),
         ]);
     }
 }
