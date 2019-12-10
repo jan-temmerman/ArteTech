@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PageController!{% endblock %}
+
+{% block body %}
+
+    <h1>Users</h1>
+    <h3><a href="{{ path('addUser') }}">Add a user</a></h3>
+
+    <div class="users-container">
+    {% for status in statuses %}
+        <div >
+            <h2>{{ status.status|capitalize }}s</h2>
+            {% for user in status.users %}
+                <p>{{ user.firstName }} {{ user.lastName }}</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    </div>
+
+{% endblock %}
