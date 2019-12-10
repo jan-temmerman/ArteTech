@@ -9,12 +9,12 @@
     <body>
         <nav class="nav-container">
             <h1>Arte Tech</h1>
-            <a href="/">Users</a>
-            <a href="/">Companies</a>
-            <a href="/">Periods</a>
-            <a href="/">Tasks</a>
+            <a class="{{ app.request.get('_route') == 'users' ? 'active' }}" href="{{ path('users') }}">Users</a>
+            <a class="{{ app.request.get('_route') == 'companies' ? 'active' }}" href="{{ path('companies') }}">Companies</a>
+            <a class="{{ app.request.get('_route') == 'periods' ? 'active' }}" href="{{ path('periods') }}">Periods</a>
+            <a class="{{ app.request.get('_route') == 'tasks' ? 'active' }}" href="{{ path('tasks') }}">Tasks</a>
         </nav>
-        <div class="content-container">
+        <div class="safe-container">
             {% block body %}{% endblock %}
             {% block javascripts %}{% endblock %}
         </div>
