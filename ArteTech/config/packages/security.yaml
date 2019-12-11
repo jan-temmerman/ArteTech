@@ -3,6 +3,12 @@ security:
     providers:
         in_memory: { memory: null }
 
+        users:
+            name: 'users_provider'
+            entity:
+                # the class of the entity that represents users
+                class: 'App\Entity\User'
+
     encoders:
         App\Entity\User:
             algorithm: auto
@@ -13,6 +19,14 @@ security:
             security: false
         main:
             anonymous: lazy
+            provider: users_provider
+            guard:
+                authenticators:
+                    - App\Security\LoginFormAuthenticator
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                # target: app_any_route
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#firewalls-authentication
@@ -23,5 +37,6 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }

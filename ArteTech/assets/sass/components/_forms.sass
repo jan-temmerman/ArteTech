@@ -1,5 +1,7 @@
 form
     display: flex
+    align-self: center
+    flex-direction: column
     width: 50%
     background-color: $main_light
     min-height: 200px
@@ -8,10 +10,25 @@ form
     border-radius: 8px
     box-shadow: #c3c3c3 0 5px 10px
 
+    .warning
+        background-color: #ffffc4
+        border: 1px solid #a09865
+        padding: 10px
+        list-style-type: none
+        border-radius: 4px
+        color: #a09865
+        font-size: 14px
+        font-weight: bold
+
+        a
+            text-decoration: underline
+            color: #a09865
+
     div
         display: flex
         width: 100%
         flex-direction: column
+
         div
             display: flex
             flex-direction: column
@@ -19,19 +36,21 @@ form
 
             input
                 border: 1px solid $secundary_light
-                padding: 4px
-                border-radius: 2px
+                padding: 10px
+                border-radius: 6px
                 font-size: 14px
 
+            input:focus
+                outline-offset: 0
+
             select
+                font-size: 14px
                 height: 30px
-                background-color: $main_light
-                border: 1px solid $secundary_light
-                border-radius: 2px
 
             button
-                background-color: $button_green
+                background-color: $main_button_green
                 padding: 10px 14px
+                border: none
                 border-radius: 3px
                 color: $main_light
                 font-weight: bold
@@ -41,3 +60,13 @@ form
 
             button:hover
                 background-color: $secundary_green
+
+            ul
+                background-color: #ffb8be
+                border: 1px solid #bb343c
+                padding: 10px
+                list-style-type: none
+                border-radius: 4px
+                color: #bb343c
+                font-size: 14px
+                font-weight: bold

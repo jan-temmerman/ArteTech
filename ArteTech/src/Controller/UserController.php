@@ -30,9 +30,12 @@ class UserController extends AbstractController
         $form = $this->createFormBuilder($user)
             ->add('firstName', TextType::class)
             ->add('lastName', TextType::class)
-            ->add('email', EmailType::class)
+            ->add('email', EmailType::class, [
+                'attr'=>['autocomplete' => 'off'],
+            ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
+                'attr'=>['autocomplete' => 'off'],
                 'invalid_message' => 'The password fields must match.',
                 'options' => ['attr' => ['class' => 'password-field']],
                 'required' => true,
