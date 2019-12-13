@@ -6,6 +6,7 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
     </head>
+    {% if not isUnauthorized %}
     <body>
         <nav class="nav-container">
             <h1>Arte Tech</h1>
@@ -14,9 +15,19 @@
             <a class="{{ app.request.get('_route') == 'periods' ? 'active' }}" href="{{ path('periods') }}">Periods</a>
             <a class="{{ app.request.get('_route') == 'tasks' ? 'active' }}" href="{{ path('tasks') }}">Tasks</a>
         </nav>
+
         <div class="safe-container">
             {% block body %}{% endblock %}
             {% block javascripts %}{% endblock %}
         </div>
     </body>
+    {% endif %}
+
+    {% if isUnauthorized%}
+        <body>
+        <div class="safe-container">
+            <h1>Unauthorized!!!</h1>
+        </div>
+        </body>
+    {% endif %}
 </html>

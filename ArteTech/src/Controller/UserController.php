@@ -17,6 +17,15 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserController extends AbstractController
 {
+    private function isAdmin()
+    {
+        $user = $this->getUser();
+        if($user->getStatus()->getStatus() === 'admin') {
+            return true;
+        } else
+            return false;
+    }
+
     /**
      * @Route("/users/add", name="addUser")
      * @param Request $request
@@ -25,48 +34,56 @@ class UserController extends AbstractController
      */
     public function index(Request $request, UserPasswordEncoderInterface $encoder)
     {
-        $user = new User();
+        $isUnauthorized = false;
 
-        $form = $this->createFormBuilder($user)
-            ->add('firstName', TextType::class)
-            ->add('lastName', TextType::class)
-            ->add('email', EmailType::class, [
-                'attr'=>['autocomplete' => 'off'],
-            ])
-            ->add('password', RepeatedType::class, [
-                'type' => PasswordType::class,
-                'attr'=>['autocomplete' => 'off'],
-                'invalid_message' => 'The password fields must match.',
-                'options' => ['attr' => ['class' => 'password-field']],
-                'required' => true,
-                'first_options'  => ['label' => 'Password'],
-                'second_options' => ['label' => 'Repeat Password'],
-            ])
-            ->add('status', EntityType::class, [
-                'class' => UserStatus::class,
-                'choice_label' => function ($status) {
-                    return ucfirst($status->getStatus());
-            }])
-            ->add('save', SubmitType::class, ['label' => 'Save user'])
-            ->getForm();
+        if($this->isAdmin()) {
+            $user = new User();
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $user = $form->getData();
+            $form = $this->createFormBuilder($user)
+                ->add('firstName', TextType::class)
+                ->add('lastName', TextType::class)
+                ->add('email', EmailType::class, [
+                    'attr' => ['autocomplete' => 'off'],
+                    'error_bubbling' => true,
+                ])
+                ->add('password', RepeatedType::class, [
+                    'type' => PasswordType::class,
+                    'attr' => ['autocomplete' => 'off'],
+                    'invalid_message' => 'The password fields must match.',
+                    'options' => ['attr' => ['class' => 'password-field']],
+                    'required' => true,
+                    'error_bubbling' => true,
+                    'first_options' => ['label' => 'Password'],
+                    'second_options' => ['label' => 'Repeat Password'],
+                ])
+                ->add('status', EntityType::class, [
+                    'class' => UserStatus::class,
+                    'choice_label' => function ($status) {
+                        return ucfirst($status->getStatus());
+                    }])
+                ->add('save', SubmitType::class, ['label' => 'Save user'])
+                ->getForm();
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $plainPassword = $user->getPassword();
-            $encoded = $encoder->encodePassword($user, $plainPassword);
-            $user->setPassword($encoded);
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $user = $form->getData();
 
-            return $this->redirect("/users");
-        }
+                $entityManager = $this->getDoctrine()->getManager();
+                $plainPassword = $user->getPassword();
+                $encoded = $encoder->encodePassword($user, $plainPassword);
+                $user->setPassword($encoded);
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                return $this->redirect("/users");
+            }
+        } else
+            $isUnauthorized = true;
 
         return $this->render('user/add.html.twig', [
             'form' => $form->createView(),
-            'title' => 'Add User'
+            'title' => 'Add User',
+            'isUnauthorized' => $isUnauthorized,
         ]);
     }
 }

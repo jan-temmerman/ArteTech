@@ -5,9 +5,9 @@
 {% block body %}
 
     <h1>{{ title }}</h1>
-    <form>
+    <div class="form-container">
         <h2>Make their account</h2>
         {{ form(form, {'attr': {'autocomplete': 'disabled'}}) }}
-    </form>
+    </div>
 
 {% endblock %}
