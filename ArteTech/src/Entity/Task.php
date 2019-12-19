@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TaskRepository")
@@ -24,28 +25,33 @@ class Task
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"group1"})
      */
     private $date;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"group1"})
      */
     private $hoursWorked;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\PauseLength")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"group1"})
      */
     private $pauseLength;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Period", inversedBy="tasks")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"group1"})
      */
     private $period;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"group1"})
      */
     private $materialsUsed;
 

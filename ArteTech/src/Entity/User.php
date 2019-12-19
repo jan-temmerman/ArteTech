@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
@@ -24,26 +25,31 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"group1"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"group1"})
      */
     private $lastName;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\UserStatus")
+     * @Groups({"group1"})
      */
     private $status;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\HourlyRate")
+     * @Groups({"group1"})
      */
     private $hourlyRate;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\TransportRate")
+     * @Groups({"group1"})
      */
     private $transportRate;
 
@@ -54,11 +60,13 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Task", mappedBy="employee")
+     * @Groups({"group1"})
      */
     private $tasks;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"group1"})
      */
     private $email;
 
@@ -256,16 +264,6 @@ class User implements UserInterface
     }
 
     /**
-     * Returns the username used to authenticate the user.
-     *
-     * @return string The username
-     */
-    public function getUsername()
-    {
-        // TODO: Implement getUsername() method.
-    }
-
-    /**
      * Removes sensitive data from the user.
      *
      * This is important if, at any given point, sensitive information like
@@ -284,5 +282,15 @@ class User implements UserInterface
         ]));
 
         $metadata->addPropertyConstraint('email', new Assert\Email());
+    }
+
+    /**
+     * Returns the username used to authenticate the user.
+     *
+     * @return string The username
+     */
+    public function getUsername()
+    {
+        // TODO: Implement getUsername() method.
     }
 }
