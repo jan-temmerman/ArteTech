@@ -1,0 +1,85 @@
+import React, { useState } from 'react'
+
+export default function LoginPage() {
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+
+    const handleInputChange = (event) => {
+        const target = event.target
+        const value = target.value
+        const name = target.name
+
+        switch(name) {
+            case "email":
+                console.log(value)
+                setEmail(value)
+                break
+            case "password":
+                console.log(value)
+                setPassword(value)
+                break
+            default:
+                break
+        }
+    }
+
+    const handleSubmit = () => {
+        console.log(email)
+        console.log(password)
+        fetch('http://localhost:8000/api/login_check', {
+            mode: 'cors',
+            method: 'POST',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+            username: email,
+            password: password
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.token)
+            fetch('http://localhost:8000/api/users', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + data.token,
+            },
+            })
+            .then(response => response.json())
+            .then(data => {
+            console.log(data) // Prints result from `response.json()` in getRequest
+            })
+            .catch(error => console.error(error)) // Prints result from `response.json()` in getRequest
+        })
+        .catch(error => console.error(error))
+    }
+
+    return (
+        <div>
+            <form>
+                <label>
+                    Email:
+                    <input
+                        name="email"
+                        type="email"
+                        value={email}
+                        onChange={handleInputChange} />
+                </label>
+                <br />
+                <label>
+                    Password:
+                    <input
+                        name="password"
+                        type="password"
+                        value={password}
+                        onChange={handleInputChange} />
+                </label>
+            </form>
+            <button onClick={handleSubmit}>submit</button>
+        </div>
+    )
+}
