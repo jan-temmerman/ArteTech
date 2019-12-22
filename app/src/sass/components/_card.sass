@@ -1,0 +1,51 @@
+.card
+    display: flex
+    align-self: center
+    flex-direction: column
+    width: 30%
+    background-color: #F7FAFF
+    min-height: 200px
+    color: black
+    padding: 20px
+    border-radius: 8px
+    box-shadow: #c3c3c3 0 5px 10px
+    margin-top: 110px
+    @include respond-to(small)
+        width: 80%
+
+    h2
+        font-weight: bold
+        margin: 0
+
+    form
+        display: flex
+        flex-direction: column
+
+        label
+            display: flex
+            flex-direction: column
+            margin: 10px 0
+            font-size: 16px
+
+        input
+            border: 1px solid #D8DAE5
+            padding: 10px
+            border-radius: 6px
+            font-size: 14px
+            margin-top: 2px
+            -webkit-appearance: none
+
+        .button
+            background-color: $main_button_green
+            padding: 10px 14px
+            border: none
+            border-radius: 3px
+            color: white
+            font-weight: bold
+            font-size: 14px
+            text-decoration: none
+            align-self: center
+            -webkit-appearance: none
+
+        .button:hover
+            background-color: $secundary_green

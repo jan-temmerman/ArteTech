@@ -45,15 +45,23 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api/users/add", name="api_users_add")
+     * @Route("/api/users/getByEmail", name="api_user_getByEmail")
      * @param Request $request
+     * @param SerializerInterface $serializer
      * @return Response
      * @method POST
      */
-    public function addUser(Request $request)
+    public function getUserByEmail(Request $request, SerializerInterface $serializer)
     {
         $data = json_decode($request->getContent(), true);
+        $repository = $this->getDoctrine()->getRepository(User::class);
+        $user = $repository->findOneByEmail($data['email']);
 
-        return new Response(json_encode($data), 200, ['Content-Type' => 'application/json']);
+        $jsonContent = $serializer->serialize(
+            $user,
+            'json', ['groups' => 'group1']
+        );
+
+        return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);
     }
 }
