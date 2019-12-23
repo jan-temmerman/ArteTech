@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
+import { useHistory } from "react-router-dom"
 
 export default function LoginPage() {
+	const history = useHistory()
+
     const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
 	const [errorContent, setErrorContent] = useState("")
@@ -39,10 +42,18 @@ export default function LoginPage() {
 			console.log(data)
 			if(data.code)
 				setErrorContent(<p className="error">Invalid credentials.</p>)
-			else
-				fetchUserByEmail(data.token)
+			else {
+				loginHandler(data)
+			}
 		})
 		.catch(error => console.error(error))
+	}
+
+	const loginHandler = (data) => {
+		setErrorContent("")
+		fetchUserByEmail(data.token)
+		localStorage.setItem('bearer', data.token)
+		history.push('/')
 	}
 
 	const fetchUserByEmail = (token) => {
