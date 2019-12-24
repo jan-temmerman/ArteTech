@@ -30,14 +30,8 @@ class Task
     private $date;
 
     /**
-     * @ORM\Column(type="float")
-     * @Groups({"group1"})
-     */
-    private $hoursWorked;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\PauseLength")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      * @Groups({"group1"})
      */
     private $pauseLength;
@@ -50,10 +44,20 @@ class Task
     private $period;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"group1"})
      */
     private $materialsUsed;
+
+    /**
+     * @ORM\Column(type="time")
+     */
+    private $start_time;
+
+    /**
+     * @ORM\Column(type="time", nullable=true)
+     */
+    private $end_time;
 
     public function getId(): ?int
     {
@@ -80,18 +84,6 @@ class Task
     public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
-
-        return $this;
-    }
-
-    public function getHoursWorked(): ?float
-    {
-        return $this->hoursWorked;
-    }
-
-    public function setHoursWorked(float $hoursWorked): self
-    {
-        $this->hoursWorked = $hoursWorked;
 
         return $this;
     }
@@ -128,6 +120,30 @@ class Task
     public function setMaterialsUsed(string $materialsUsed): self
     {
         $this->materialsUsed = $materialsUsed;
+
+        return $this;
+    }
+
+    public function getStartTime(): ?\DateTimeInterface
+    {
+        return $this->start_time;
+    }
+
+    public function setStartTime(\DateTimeInterface $start_time): self
+    {
+        $this->start_time = $start_time;
+
+        return $this;
+    }
+
+    public function getEndTime(): ?\DateTimeInterface
+    {
+        return $this->end_time;
+    }
+
+    public function setEndTime(?\DateTimeInterface $end_time): self
+    {
+        $this->end_time = $end_time;
 
         return $this;
     }

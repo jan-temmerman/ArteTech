@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\PauseLength;
+use App\Entity\Period;
+use App\Entity\Task;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -45,7 +48,7 @@ class ApiController extends AbstractController
     }
 
     /**
-     * @Route("/api/users/getByEmail", name="api_user_getByEmail")
+     * @Route("/api/users/getByEmail", name="api_users_getByEmail")
      * @param Request $request
      * @param SerializerInterface $serializer
      * @return Response
@@ -63,5 +66,48 @@ class ApiController extends AbstractController
         );
 
         return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("/api/tasks/setTask", name="api_tasks_setTask")
+     * @param Request $request
+     * @return Response
+     * @method POST
+     */
+    public function setTask(Request $request)
+    {
+        $task = new Task();
+
+        $data = json_decode($request->getContent(), true);
+
+        $employeeRepository = $this->getDoctrine()->getRepository(User::class);
+        $employee = $employeeRepository->find($data['employee_id']);
+
+        $periodRepository = $this->getDoctrine()->getRepository(Period::class);
+        $period = $periodRepository->find($data['period_id']);
+
+        if($data['pause_id']) {
+            $pauseRepository = $this->getDoctrine()->getRepository(PauseLength::class);
+            $pause = $pauseRepository->find($data['pause_id']);
+        }
+
+
+        $task->setEmployee($employee);
+        $task->setPeriod($period);
+        $task->setDate(\DateTime::createFromFormat('Y-m-d', $data['date']));
+        $task->setStartTime(\DateTime::createFromFormat('Y-m-d H:i:s', $data['date'] . ' ' .$data['time']['start']));
+        if($data['time']['end'])
+            $task->setEndTime(\DateTime::createFromFormat('Y-m-d H:i:s', $data['date'] . ' ' .$data['time']['end']));
+        if($data['pause_id'])
+            $task->setPauseLength($pause);
+        $task->setMaterialsUsed($data['materials_used']);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($task);
+        $entityManager->flush();
+
+        $response = new JsonResponse(array('status' => '201', 'message' => "Task successfully persisted."));
+
+        return new Response($response->getContent(), 200, ['Content-Type' => 'application/json']);
     }
 }
