@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from "react-router-dom"
 import Select from 'react-select'
+import DatePicker from 'react-datepicker'
+
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function AddTaskPage() {
 	const history = useHistory()
@@ -13,6 +16,9 @@ export default function AddTaskPage() {
 	const [periodsIsLoading, setPeriodsIsLoading] = useState(true)
 	const [selectedPeriod, setSelectedPeriod] = useState("")
 	const [selectIsDisabled, setSelectIsDisabled] = useState(true)
+	const [date, setDate] = useState(new Date());
+	const [startTime, setStartTime] = useState(new Date());
+	const [endTime, setEndTime] = useState(new Date());	
 
 	useEffect(() => {
 		if(selectedCompany === null) {
@@ -24,6 +30,8 @@ export default function AddTaskPage() {
 	}, [selectedCompany])
 
 	useEffect(() => {
+		//getPauseLengths()
+
 		if(periods.length > 0) {
 	
 			for(let period of periods) {
@@ -76,16 +84,10 @@ export default function AddTaskPage() {
 				}
 			}
 		}
-		if(kind === 'company') {
-			setCompanies(activeEntities)
-			setCompaniesIsLoading(false)
-		} else if(kind === 'period') {
-			setPeriods(activeEntities)
-			setPeriodsIsLoading(false)
-		}
 
 		switch(kind) {
 			case "company":
+				console.log(entities)
 				setCompanies(activeEntities)
 				setCompaniesIsLoading(false)
 				break
@@ -141,6 +143,33 @@ export default function AddTaskPage() {
 		.catch(error => console.error(error)) // Prints result from `response.json()` in getRequest
 	}
 
+	/*const getPauseLengths = () => {
+		const token = localStorage.getItem('bearer')
+		fetch('http://localhost:8000/api/pause_lengths', {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Authorization': 'Bearer ' + token,
+			},
+		})
+		.then(response => response.json())
+		.then(data => {
+			console.log(data) // Prints result from `response.json()` in getRequest
+			for(let pause of data) {
+				let given_seconds = new Date(pause.time).getTime()
+				let hours = Math.floor(given_seconds / 3600); 
+				let minutes = Math.floor((given_seconds - (hours * 3600)) / 60); 
+				let seconds = given_seconds - (hours * 3600) - (minutes * 60); 
+	
+				let timeString = hours.toString().padStart(2, '0') + ':' + 
+                minutes.toString().padStart(2, '0') + ':' + 
+                seconds.toString().padStart(2, '0');
+				console.log(timeString)
+			}
+		})
+		.catch(error => console.error(error)) // Prints result from `response.json()` in getRequest
+	}*/
+
 	const getPeriodsByCompany = (companyName) => {
 		const token = localStorage.getItem('bearer')
 		fetch('http://localhost:8000/api/periods/getByCompany', {
@@ -186,22 +215,58 @@ export default function AddTaskPage() {
 					<label>
 						Klant
 						<Select 
-							onChange={(selectedCompany) => companySelectHandler(selectedCompany)}
-							options={companies}
-							isLoading={comapniesIsLoading}
-							isClearable={true}
-							isSearchable={true}/>
+						onChange={(selectedCompany) => companySelectHandler(selectedCompany)}
+						options={companies}
+						isLoading={comapniesIsLoading}
+						isClearable={true}
+						isSearchable={true}
+						/>
 					</label>
 					<label>
 						Opdracht
 						<Select 
-							onChange={(selectedPeriod) => periodSelectHandler(selectedPeriod)}
-							options={periods}
-							isLoading={periodsIsLoading}
-							isClearable={true}
-							isSearchable={true}
-							isDisabled={selectIsDisabled}
-							value={selectedPeriod}/>
+						onChange={(selectedPeriod) => periodSelectHandler(selectedPeriod)}
+						options={periods}
+						isLoading={periodsIsLoading}
+						isClearable={true}
+						isSearchable={true}
+						isDisabled={selectIsDisabled}
+						value={selectedPeriod}
+						/>
+					</label>
+					<label>
+						Datum
+						<DatePicker
+						showPopperArrow={false}
+						selected={date}
+						onChange={date => setDate(date)}
+						todayButton="Vandaag"
+						dateFormat="dd/MM/yyyy"
+						/>
+					</label>
+					<label>
+						Start tijd
+						<DatePicker
+						selected={startTime}
+						onChange={time => setStartTime(time)}
+						showTimeSelect
+						showTimeSelectOnly
+						timeIntervals={15}
+						timeCaption="Time"
+						dateFormat="HH:mm:ss"
+						/>
+					</label>
+					<label>
+						Eind tijd
+						<DatePicker
+						selected={endTime}
+						onChange={time => setEndTime(time)}
+						showTimeSelect
+						showTimeSelectOnly
+						timeIntervals={15}
+						timeCaption="Time"
+						dateFormat="HH:mm:ss"
+						/>
 					</label>
 					<label>
 						Materialen

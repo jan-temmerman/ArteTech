@@ -194,4 +194,37 @@ class ApiController extends AbstractController
 
         return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);
     }
+
+    /**
+     * @Route("/api/pause_lengths", name="api_pause_lengths")
+     * @param SerializerInterface $serializer
+     * @return Response
+     * @throws AnnotationException
+     * @throws ExceptionInterface
+     */
+    public function pauseLengths(SerializerInterface $serializer)
+    {
+        $repository = $this->getDoctrine()->getRepository(PauseLength::class);
+        $pauses = $repository->findAll();
+
+        $classMetaDataFactory = new ClassMetadataFactory(
+            new AnnotationLoader(
+                new AnnotationReader()
+            )
+        );
+
+        $norm = [ new DateTimeNormalizer(), new ObjectNormalizer($classMetaDataFactory)];
+        $encoders = [new JsonEncoder()];
+        $serializer = new Serializer($norm, $encoders);
+
+        $jsonContent = $serializer->normalize(
+            $pauses,
+            'json', ['groups' => 'pause_safe']
+        );
+
+        $jsonContent = json_encode($jsonContent);
+
+
+        return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);
+    }
 }
