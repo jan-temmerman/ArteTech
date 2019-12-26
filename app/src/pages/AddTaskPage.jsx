@@ -9,11 +9,33 @@ export default function AddTaskPage() {
 	const [companies, setCompanies] = useState([])
 	const [comapniesIsLoading, setCompaniesIsLoading] = useState(true)
 	const [selectedCompany, setSelectedCompany] = useState("")
+	const [periods, setPeriods] = useState([])
+	const [periodsIsLoading, setPeriodsIsLoading] = useState(true)
+	const [selectedPeriod, setSelectedPeriod] = useState("")
+	const [selectIsDisabled, setSelectIsDisabled] = useState(true)
 
 	useEffect(() => {
-		console.log(selectedCompany)
+		if(selectedCompany === null) {
+			setSelectIsDisabled(true)
+			setSelectedPeriod("")
+		}
+
 		return
 	}, [selectedCompany])
+
+	useEffect(() => {
+		if(periods.length > 0) {
+	
+			for(let period of periods) {
+				console.log(period.value)
+				console.log(selectedPeriod.value)
+				if(period.value !== selectedPeriod.value)
+					setSelectedPeriod("")
+			}
+		}
+
+		return
+	}, [periods])
 	
 	useEffect(() => {
 		if(localStorage.getItem('bearer') == null) {
@@ -39,14 +61,40 @@ export default function AddTaskPage() {
 		}
 	}
 
-	const getActiveCompanies = (periods) => {
-		let companies = []
-			for(let period of periods) {
-				if(new Date(period.startDate) <= new Date() && new Date() <= new Date(period.endDate))
-					companies.push({value: period.company.name, label: period.company.name})
+	const getActiveEntities = (entities, kind) => {
+		let activeEntities = []
+		for(let entity of entities) {
+			if(new Date(entity.startDate) <= new Date() && new Date() <= new Date(entity.endDate)) {
+				switch(kind) {
+					case 'company':
+						activeEntities.push({value: entity.company.name, label: entity.company.name})
+						break
+
+					case 'period':
+						activeEntities.push({value: entity.name, label: entity.name})
+						break
+				}
 			}
-		setCompanies(companies)
-		setCompaniesIsLoading(false)
+		}
+		if(kind === 'company') {
+			setCompanies(activeEntities)
+			setCompaniesIsLoading(false)
+		} else if(kind === 'period') {
+			setPeriods(activeEntities)
+			setPeriodsIsLoading(false)
+		}
+
+		switch(kind) {
+			case "company":
+				setCompanies(activeEntities)
+				setCompaniesIsLoading(false)
+				break
+			
+			case "period":
+				setPeriods(activeEntities)
+				setPeriodsIsLoading(false)
+				break
+		}
 	}
 
 	const getAllPeriods = () => {
@@ -61,7 +109,7 @@ export default function AddTaskPage() {
 		})
 		.then(response => response.json())
 		.then(data => {
-			getActiveCompanies(data)
+			getActiveEntities(data, "company")
 		})
 		.catch(error => console.error(error))
 	}
@@ -94,7 +142,22 @@ export default function AddTaskPage() {
 	}
 
 	const getPeriodsByCompany = (companyName) => {
-		
+		const token = localStorage.getItem('bearer')
+		fetch('http://localhost:8000/api/periods/getByCompany', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + token,
+			},
+			body: JSON.stringify({
+				'name': companyName
+			})
+		})
+		.then(response => response.json())
+		.then(data => {
+			getActiveEntities(data, "period")
+		})
+		.catch(error => console.error(error)) // Prints result from `response.json()` in getRequest
 	}
 
 	const handleSubmit = (e) => {
@@ -104,7 +167,12 @@ export default function AddTaskPage() {
 
 	const companySelectHandler = (selectedComp) => {
 		setSelectedCompany(selectedComp)
+		setSelectIsDisabled(false)
 		getPeriodsByCompany(selectedComp)
+	}
+
+	const periodSelectHandler = (selectedPer) => {
+		setSelectedPeriod(selectedPer)
 	}
 
 	return (
@@ -123,6 +191,17 @@ export default function AddTaskPage() {
 							isLoading={comapniesIsLoading}
 							isClearable={true}
 							isSearchable={true}/>
+					</label>
+					<label>
+						Opdracht
+						<Select 
+							onChange={(selectedPeriod) => periodSelectHandler(selectedPeriod)}
+							options={periods}
+							isLoading={periodsIsLoading}
+							isClearable={true}
+							isSearchable={true}
+							isDisabled={selectIsDisabled}
+							value={selectedPeriod}/>
 					</label>
 					<label>
 						Materialen

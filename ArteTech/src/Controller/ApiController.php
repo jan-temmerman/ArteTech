@@ -2,10 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Company;
 use App\Entity\PauseLength;
 use App\Entity\Period;
 use App\Entity\Task;
 use App\Entity\User;
+use DateTimeZone;
 use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -128,7 +130,6 @@ class ApiController extends AbstractController
      */
     public function getPeriods()
     {
-
         $periodsRepository = $this->getDoctrine()->getRepository(Period::class);
         $period = $periodsRepository->findAll();
 
@@ -144,7 +145,48 @@ class ApiController extends AbstractController
 
         $jsonContent = $serializer->normalize(
             $period,
-            'json', ['groups' => ['period_safe', 'hourlyRate_safe', 'transportRate_safe', 'company_safe'], ObjectNormalizer::ENABLE_MAX_DEPTH => true]
+            'json', ['groups' => ['period_safe', 'hourlyRate_safe', 'transportRate_safe', 'company_safe']]
+        );
+
+        $jsonContent = json_encode($jsonContent);
+
+
+        return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("/api/periods/getByCompany", name="api_periods_getByCompany")
+     * @param Request $request
+     * @return Response
+     * @throws AnnotationException
+     * @throws ExceptionInterface
+     * @method POST
+     */
+    public function getPeriodsByCompany(Request $request)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $companyName = $data['name'];
+
+        $companyRepository = $this->getDoctrine()->getRepository(Company::class);
+        $company = $companyRepository->findOneByName($companyName);
+
+        $periodsRepository = $this->getDoctrine()->getRepository(Period::class);
+        $periods = $periodsRepository->findByCompany($company);
+
+        $classMetaDataFactory = new ClassMetadataFactory(
+            new AnnotationLoader(
+                new AnnotationReader()
+            )
+        );
+
+        $norm = [ new DateTimeNormalizer(), new ObjectNormalizer($classMetaDataFactory)];
+        $encoders = [new JsonEncoder()];
+        $serializer = new Serializer($norm, $encoders);
+
+        $jsonContent = $serializer->normalize(
+            $periods,
+            'json', ['groups' => ['period_safe', 'hourlyRate_safe', 'transportRate_safe', 'company_safe']]
         );
 
         $jsonContent = json_encode($jsonContent);
