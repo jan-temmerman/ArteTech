@@ -14,48 +14,52 @@ class Task
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"task_safe"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="tasks")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"task_safe"})
      */
     private $employee;
 
     /**
      * @ORM\Column(type="date")
-     * @Groups({"group1"})
+     * @Groups({"task_safe"})
      */
     private $date;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\PauseLength")
      * @ORM\JoinColumn(nullable=true)
-     * @Groups({"group1"})
+     * @Groups({"task_safe"})
      */
     private $pauseLength;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Period", inversedBy="tasks")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"group1"})
+     * @Groups({"task_safe"})
      */
     private $period;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"group1"})
+     * @Groups({"task_safe"})
      */
     private $materialsUsed;
 
     /**
      * @ORM\Column(type="time")
+     * @Groups({"task_safe"})
      */
     private $start_time;
 
     /**
      * @ORM\Column(type="time", nullable=true)
+     * @Groups({"task_safe"})
      */
     private $end_time;
 

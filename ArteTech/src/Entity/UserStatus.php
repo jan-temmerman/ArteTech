@@ -21,7 +21,7 @@ class UserStatus
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"group1"})
+     * @Groups({"status_safe"})
      */
     private $status;
 

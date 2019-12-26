@@ -25,31 +25,31 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"group1"})
+     * @Groups({"user_safe"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"group1"})
+     * @Groups({"user_safe"})
      */
     private $lastName;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\UserStatus")
-     * @Groups({"group1"})
+     * @Groups({"user_safe"})
      */
     private $status;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\HourlyRate")
-     * @Groups({"group1"})
+     * @Groups({"user_safe"})
      */
     private $hourlyRate;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\TransportRate")
-     * @Groups({"group1"})
+     * @Groups({"user_safe"})
      */
     private $transportRate;
 
@@ -60,13 +60,12 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Task", mappedBy="employee")
-     * @Groups({"group1"})
      */
     private $tasks;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"group1"})
+     * @Groups({"user_safe"})
      */
     private $email;
 

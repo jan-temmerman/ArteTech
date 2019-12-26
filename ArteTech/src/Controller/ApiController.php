@@ -6,6 +6,8 @@ use App\Entity\PauseLength;
 use App\Entity\Period;
 use App\Entity\Task;
 use App\Entity\User;
+use Doctrine\Common\Annotations\AnnotationException;
+use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,10 +15,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 class ApiController extends AbstractController
 {
@@ -62,7 +70,7 @@ class ApiController extends AbstractController
 
         $jsonContent = $serializer->serialize(
             $user,
-            'json', ['groups' => 'group1']
+            'json', ['groups' => ['user_safe', 'status_safe', 'task_safe']]
         );
 
         return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);
@@ -109,5 +117,39 @@ class ApiController extends AbstractController
         $response = new JsonResponse(array('status' => '201', 'message' => "Task successfully persisted."));
 
         return new Response($response->getContent(), 200, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("/api/periods/getAll", name="api_periods_getAll")
+     * @return Response
+     * @method GET
+     * @throws AnnotationException
+     * @throws ExceptionInterface
+     */
+    public function getPeriods()
+    {
+
+        $periodsRepository = $this->getDoctrine()->getRepository(Period::class);
+        $period = $periodsRepository->findAll();
+
+        $classMetaDataFactory = new ClassMetadataFactory(
+            new AnnotationLoader(
+                new AnnotationReader()
+            )
+        );
+
+        $norm = [ new DateTimeNormalizer(), new ObjectNormalizer($classMetaDataFactory)];
+        $encoders = [new JsonEncoder()];
+        $serializer = new Serializer($norm, $encoders);
+
+        $jsonContent = $serializer->normalize(
+            $period,
+            'json', ['groups' => ['period_safe', 'hourlyRate_safe', 'transportRate_safe', 'company_safe'], ObjectNormalizer::ENABLE_MAX_DEPTH => true]
+        );
+
+        $jsonContent = json_encode($jsonContent);
+
+
+        return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);
     }
 }

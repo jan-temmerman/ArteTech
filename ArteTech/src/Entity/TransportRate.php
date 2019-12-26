@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TransportRateRepository")
@@ -13,16 +14,19 @@ class TransportRate
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"transportRate_safe"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"transportRate_safe"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"transportRate_safe"})
      */
     private $unit;
 

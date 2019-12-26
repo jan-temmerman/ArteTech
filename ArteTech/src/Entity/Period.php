@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PeriodRepository")
@@ -15,44 +16,52 @@ class Period
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"period_safe"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"period_safe"})
      */
     private $startDate;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"period_safe"})
      */
     private $endDate;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"period_safe"})
      */
     private $name;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\HourlyRate")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"period_safe"})
      */
     private $hourlyRate;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\TransportRate")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"period_safe"})
      */
     private $transportRate;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="periods")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"period_safe"})
      */
     private $company;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Task", mappedBy="period")
+     * @Groups({"period_safe"})
      */
     private $tasks;
 
