@@ -139,9 +139,10 @@ export default function AddTaskPage() {
 
 	const postTask = () => {
 		const token = localStorage.getItem('bearer')
+		const user = JSON.parse(localStorage.getItem('user'))
 
 		const data = {
-			'employee_id': 9,
+			'employee_id': user.id,
 			'period_id': selectedPeriod.value,
 			'pause_id': selectedPause.value,
 			'date': format(date, "yyyy-MM-dd", { awareOfUnicodeTokens: true }),
