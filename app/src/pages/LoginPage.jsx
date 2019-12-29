@@ -43,16 +43,16 @@ export default function LoginPage() {
 			if(data.code)
 				setErrorContent(<p className="error">Invalid credentials.</p>)
 			else {
-				loginHandler(data)
+				fetchUserByEmail(data.token)
 			}
 		})
 		.catch(error => console.error(error))
 	}
 
-	const loginHandler = (data) => {
+	const loginHandler = (token, user) => {
 		setErrorContent("")
-		fetchUserByEmail(data.token)
-		localStorage.setItem('bearer', data.token)
+		localStorage.setItem('user', JSON.stringify(user))
+		localStorage.setItem('bearer', token)
 		history.push('/')
 	}
 
@@ -70,7 +70,10 @@ export default function LoginPage() {
 		})
 		.then(response => response.json())
 		.then(data => {
-			console.log(data) // Prints result from `response.json()` in getRequest
+			if(data.status.status === 'employee' || data.status.status === 'freelancer')
+				loginHandler(token, data)
+			else
+				setErrorContent(<p className="error">This portal is for employees and freelancers only.</p>)
 		})
 		.catch(error => console.error(error)) // Prints result from `response.json()` in getRequest
 	}

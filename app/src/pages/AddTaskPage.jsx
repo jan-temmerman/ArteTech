@@ -129,7 +129,10 @@ export default function AddTaskPage() {
 		})
 		.then(response => response.json())
 		.then(data => {
-			getActiveEntities(data, "company")
+			if(data.code) 
+				handleBadJWT()
+			else
+				getActiveEntities(data, "company")
 		})
 		.catch(error => console.error(error))
 	}
@@ -162,11 +165,16 @@ export default function AddTaskPage() {
 		})
 		.then(response => response.json())
 		.then(data => {
-			console.log(data)
-			if(data.status == "400")
-				setErrorContent(<p className="error">{data.message}</p>)
-			else
-				setErrorContent("")
+			if(data.code) 
+				handleBadJWT()
+			else {
+				if(data.status == "400")
+					setErrorContent(<p className="error">{data.message}</p>)
+				else
+					setErrorContent("")
+
+				console.log(data)
+			}
 		})
 		.catch(error => console.error(error))
 	}
@@ -229,6 +237,11 @@ export default function AddTaskPage() {
 
 	const periodSelectHandler = (selectedPer) => {
 		setSelectedPeriod(selectedPer)
+	}
+
+	const handleBadJWT = () => {
+		alert("Session timed out. Please log in.")
+		history.push('/login')
 	}
 
 	return (

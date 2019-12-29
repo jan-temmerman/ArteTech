@@ -100,16 +100,19 @@ class ApiController extends AbstractController
             return new Response($response->getContent(), 400, ['Content-Type' => 'application/json']);
         }
 
+        if(empty($data['pause_id'])){
+            $response = new JsonResponse(array('status' => '400', 'message' => "'Length of pause' is required."));
+            return new Response($response->getContent(), 400, ['Content-Type' => 'application/json']);
+        }
+
         $employeeRepository = $this->getDoctrine()->getRepository(User::class);
         $employee = $employeeRepository->find($data['employee_id']);
 
         $periodRepository = $this->getDoctrine()->getRepository(Period::class);
         $period = $periodRepository->find($data['period_id']);
 
-        if($data['pause_id']) {
-            $pauseRepository = $this->getDoctrine()->getRepository(PauseLength::class);
-            $pause = $pauseRepository->find($data['pause_id']);
-        }
+        $pauseRepository = $this->getDoctrine()->getRepository(PauseLength::class);
+        $pause = $pauseRepository->find($data['pause_id']);
 
 
         $task->setEmployee($employee);
@@ -117,8 +120,7 @@ class ApiController extends AbstractController
         $task->setDate(\DateTime::createFromFormat('Y-m-d', $data['date']));
         $task->setStartTime(\DateTime::createFromFormat('Y-m-d H:i:s', $data['date'] . ' ' .$data['time']['start']));
         $task->setEndTime(\DateTime::createFromFormat('Y-m-d H:i:s', $data['date'] . ' ' .$data['time']['end']));
-        if($data['pause_id'])
-            $task->setPauseLength($pause);
+        $task->setPauseLength($pause);
         $task->setActivitiesDone($data['activities_done']);
         $task->setMaterialsUsed($data['materials_used']);
         $task->setKmTraveled($data['km']);
