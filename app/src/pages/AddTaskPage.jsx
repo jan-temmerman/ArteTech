@@ -3,22 +3,38 @@ import { useHistory } from "react-router-dom"
 import Select from 'react-select'
 import DatePicker from 'react-datepicker'
 
-import "react-datepicker/dist/react-datepicker.css";
+import "react-datepicker/dist/react-datepicker.css"
+import format from "date-fns/format"
 
 export default function AddTaskPage() {
 	const history = useHistory()
 
+	const [errorContent, setErrorContent] = useState("")
+	const [km, setKm] = useState(0)
 	const [materials, steMaterials] = useState("")
+	const [activity, setActivity] = useState("")
 	const [companies, setCompanies] = useState([])
 	const [comapniesIsLoading, setCompaniesIsLoading] = useState(true)
 	const [selectedCompany, setSelectedCompany] = useState("")
 	const [periods, setPeriods] = useState([])
 	const [periodsIsLoading, setPeriodsIsLoading] = useState(true)
 	const [selectedPeriod, setSelectedPeriod] = useState("")
+	const [pauseLengths, setPauseLengths] = useState([])
+	const [selectedPause, setSelectedPause] = useState("")
 	const [selectIsDisabled, setSelectIsDisabled] = useState(true)
 	const [date, setDate] = useState(new Date());
 	const [startTime, setStartTime] = useState(new Date());
 	const [endTime, setEndTime] = useState(new Date());	
+
+	useEffect(() => {
+		if(localStorage.getItem('bearer') == null) {
+			history.push('/login')
+		}
+
+		getAllPeriods()
+
+		return
+	}, [])
 
 	useEffect(() => {
 		if(selectedCompany === null) {
@@ -30,13 +46,11 @@ export default function AddTaskPage() {
 	}, [selectedCompany])
 
 	useEffect(() => {
-		//getPauseLengths()
+		getPauseLengths()
 
 		if(periods.length > 0) {
 	
 			for(let period of periods) {
-				console.log(period.value)
-				console.log(selectedPeriod.value)
 				if(period.value !== selectedPeriod.value)
 					setSelectedPeriod("")
 			}
@@ -44,16 +58,6 @@ export default function AddTaskPage() {
 
 		return
 	}, [periods])
-	
-	useEffect(() => {
-		if(localStorage.getItem('bearer') == null) {
-			history.push('/login')
-		}
-
-		getAllPeriods()
-
-		return
-	}, [])
 
 	const handleInputChange = (event) => {
 		const target = event.target
@@ -64,6 +68,15 @@ export default function AddTaskPage() {
 			case "materials":
 				steMaterials(value)
 				break
+
+			case "transport":
+				setKm(value)
+				break
+
+			case "activity":
+				setActivity(value)
+				break
+
 			default:
 				break
 		}
@@ -79,15 +92,17 @@ export default function AddTaskPage() {
 						break
 
 					case 'period':
-						activeEntities.push({value: entity.name, label: entity.name})
+						activeEntities.push({value: entity.id, label: entity.name})
 						break
+
+					default:
+							break
 				}
 			}
 		}
 
 		switch(kind) {
 			case "company":
-				console.log(entities)
 				setCompanies(activeEntities)
 				setCompaniesIsLoading(false)
 				break
@@ -95,6 +110,9 @@ export default function AddTaskPage() {
 			case "period":
 				setPeriods(activeEntities)
 				setPeriodsIsLoading(false)
+				break
+
+			default:
 				break
 		}
 	}
@@ -118,32 +136,43 @@ export default function AddTaskPage() {
 
 	const postTask = () => {
 		const token = localStorage.getItem('bearer')
+
+		const data = {
+			'employee_id': 9,
+			'period_id': selectedPeriod.value,
+			'pause_id': selectedPause.value,
+			'date': format(date, "yyyy-MM-dd", { awareOfUnicodeTokens: true }),
+			'time': {
+				'start': format(startTime, "HH:mm:ss", { awareOfUnicodeTokens: true }),
+				'end': format(endTime, "HH:mm:ss", { awareOfUnicodeTokens: true })
+			},
+			'activities_done': activity,
+			'materials_used': materials,
+			'km': parseInt(km)
+		}
+
 		fetch('http://localhost:8000/api/tasks/setTask', {
 			method: 'POST',
 			headers: {
+				'Accept': 'application/json',
 				'Content-Type': 'application/json',
 				'Authorization': 'Bearer ' + token,
 			},
-			body: JSON.stringify({
-				'employee_id': 9,
-				'period_id': 1,
-				'pause_id': 1,
-				'date': "2019-12-22",
-				'time': {
-					'start': "08:00:00",
-					'end': "17:12:00"
-				},
-				'materials_used': materials
-			})
+			body: JSON.stringify(data)
 		})
 		.then(response => response.json())
 		.then(data => {
-			console.log(data) // Prints result from `response.json()` in getRequest
+			console.log(data)
+			if(data.status == "400")
+				setErrorContent(<p className="error">{data.message}</p>)
+			else
+				setErrorContent("")
 		})
-		.catch(error => console.error(error)) // Prints result from `response.json()` in getRequest
+		.catch(error => console.error(error))
 	}
 
-	/*const getPauseLengths = () => {
+	const getPauseLengths = () => {
+		let options = []
 		const token = localStorage.getItem('bearer')
 		fetch('http://localhost:8000/api/pause_lengths', {
 			method: 'GET',
@@ -154,21 +183,19 @@ export default function AddTaskPage() {
 		})
 		.then(response => response.json())
 		.then(data => {
-			console.log(data) // Prints result from `response.json()` in getRequest
 			for(let pause of data) {
 				let given_seconds = new Date(pause.time).getTime()
-				let hours = Math.floor(given_seconds / 3600); 
-				let minutes = Math.floor((given_seconds - (hours * 3600)) / 60); 
-				let seconds = given_seconds - (hours * 3600) - (minutes * 60); 
+				let hours = Math.floor(given_seconds / 3600000); 
+				let minutes = Math.floor((given_seconds - (hours * 3600000)) / 60000);
 	
-				let timeString = hours.toString().padStart(2, '0') + ':' + 
-                minutes.toString().padStart(2, '0') + ':' + 
-                seconds.toString().padStart(2, '0');
-				console.log(timeString)
+				let timeString = hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0'); 
+				options.push({value: pause.id, label: timeString})
 			}
+
+			setPauseLengths(options)
 		})
-		.catch(error => console.error(error)) // Prints result from `response.json()` in getRequest
-	}*/
+		.catch(error => console.error(error))
+	}
 
 	const getPeriodsByCompany = (companyName) => {
 		const token = localStorage.getItem('bearer')
@@ -211,6 +238,7 @@ export default function AddTaskPage() {
 			</div>
 			<div className='card'>
 				<h2>Taak toevoegen</h2>
+				{errorContent}
 				<form onSubmit={handleSubmit} method="post">
 					<label>
 						Klant
@@ -242,6 +270,7 @@ export default function AddTaskPage() {
 						onChange={date => setDate(date)}
 						todayButton="Vandaag"
 						dateFormat="dd/MM/yyyy"
+						shouldCloseOnSelect={true}
 						/>
 					</label>
 					<label>
@@ -253,7 +282,8 @@ export default function AddTaskPage() {
 						showTimeSelectOnly
 						timeIntervals={15}
 						timeCaption="Time"
-						dateFormat="HH:mm:ss"
+						dateFormat="HH:mm"
+						shouldCloseOnSelect={true}
 						/>
 					</label>
 					<label>
@@ -265,8 +295,26 @@ export default function AddTaskPage() {
 						showTimeSelectOnly
 						timeIntervals={15}
 						timeCaption="Time"
-						dateFormat="HH:mm:ss"
+						dateFormat="HH:mm"
+						shouldCloseOnSelect={true}
 						/>
+					</label>
+					<label>
+						Lengte Pauze
+						<Select 
+						onChange={(selectedPause) => setSelectedPause(selectedPause)}
+						options={pauseLengths}
+						isClearable={true}
+						isSearchable={true}
+						/>
+					</label>
+					<label>
+						Uitgevoerde activiteiten
+						<input
+							name="activity"
+							type="text"
+							value={activity}
+							onChange={handleInputChange}/>
 					</label>
 					<label>
 						Materialen
@@ -274,6 +322,14 @@ export default function AddTaskPage() {
 							name="materials"
 							type="text"
 							value={materials}
+							onChange={handleInputChange}/>
+					</label>
+					<label>
+						Transport (km)
+						<input
+							name="transport"
+							type="number"
+							value={km}
 							onChange={handleInputChange}/>
 					</label>
 					<input className='button' type="submit" value="Voeg Toe" />

@@ -63,6 +63,16 @@ class Task
      */
     private $end_time;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $km_traveled;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $activities_done;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -148,6 +158,30 @@ class Task
     public function setEndTime(?\DateTimeInterface $end_time): self
     {
         $this->end_time = $end_time;
+
+        return $this;
+    }
+
+    public function getKmTraveled(): ?int
+    {
+        return $this->km_traveled;
+    }
+
+    public function setKmTraveled(int $km_traveled): self
+    {
+        $this->km_traveled = $km_traveled;
+
+        return $this;
+    }
+
+    public function getActivitiesDone(): ?string
+    {
+        return $this->activities_done;
+    }
+
+    public function setActivitiesDone(string $activities_done): self
+    {
+        $this->activities_done = $activities_done;
 
         return $this;
     }

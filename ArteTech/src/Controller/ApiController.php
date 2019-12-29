@@ -90,6 +90,16 @@ class ApiController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
 
+        if(empty($data['period_id'])){
+            $response = new JsonResponse(array('status' => '400', 'message' => "Period is required."));
+            return new Response($response->getContent(), 400, ['Content-Type' => 'application/json']);
+        }
+
+        if(empty($data['activities_done'])){
+            $response = new JsonResponse(array('status' => '400', 'message' => "'Activities done' is required."));
+            return new Response($response->getContent(), 400, ['Content-Type' => 'application/json']);
+        }
+
         $employeeRepository = $this->getDoctrine()->getRepository(User::class);
         $employee = $employeeRepository->find($data['employee_id']);
 
@@ -106,11 +116,12 @@ class ApiController extends AbstractController
         $task->setPeriod($period);
         $task->setDate(\DateTime::createFromFormat('Y-m-d', $data['date']));
         $task->setStartTime(\DateTime::createFromFormat('Y-m-d H:i:s', $data['date'] . ' ' .$data['time']['start']));
-        if($data['time']['end'])
-            $task->setEndTime(\DateTime::createFromFormat('Y-m-d H:i:s', $data['date'] . ' ' .$data['time']['end']));
+        $task->setEndTime(\DateTime::createFromFormat('Y-m-d H:i:s', $data['date'] . ' ' .$data['time']['end']));
         if($data['pause_id'])
             $task->setPauseLength($pause);
+        $task->setActivitiesDone($data['activities_done']);
         $task->setMaterialsUsed($data['materials_used']);
+        $task->setKmTraveled($data['km']);
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($task);
@@ -118,7 +129,7 @@ class ApiController extends AbstractController
 
         $response = new JsonResponse(array('status' => '201', 'message' => "Task successfully persisted."));
 
-        return new Response($response->getContent(), 200, ['Content-Type' => 'application/json']);
+        return new Response($response->getContent(), 201, ['Content-Type' => 'application/json']);
     }
 
     /**
