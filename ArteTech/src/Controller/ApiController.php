@@ -240,4 +240,42 @@ class ApiController extends AbstractController
 
         return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);
     }
+
+    /**
+     * @Route("/api/tasks/getFromUser", name="api_tasks_getFromUser")
+     * @param Request $request
+     * @param SerializerInterface $serializer
+     * @return Response
+     * @throws AnnotationException
+     * @throws ExceptionInterface
+     * @method POST
+     */
+    public function getTasksFromUser(Request $request, SerializerInterface $serializer)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $repository = $this->getDoctrine()->getRepository(User::class);
+        $user = $repository->find($data['id']);
+
+        $tasks = $user->getTasks();
+
+        $classMetaDataFactory = new ClassMetadataFactory(
+            new AnnotationLoader(
+                new AnnotationReader()
+            )
+        );
+
+        $norm = [ new DateTimeNormalizer(), new ObjectNormalizer($classMetaDataFactory)];
+        $encoders = [new JsonEncoder()];
+        $serializer = new Serializer($norm, $encoders);
+
+        $jsonContent = $serializer->normalize(
+            $tasks,
+            'json', ['groups' => ['task_safe', 'pause_safe', 'for_task', 'hourlyRate_safe', 'transportRate_safe']]
+        );
+
+        $jsonContent = json_encode($jsonContent);
+
+        return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);
+    }
 }

@@ -8,6 +8,7 @@ import {
 
 import LoginPage from './pages/LoginPage'
 import AddTaskPage from './pages/AddTaskPage'
+import TasksPage from './pages/TasksPage'
 
 function App() {
 
@@ -28,11 +29,14 @@ function App() {
         </nav>*/}
 
         <Switch>
-          <Route path="/login">
+          <Route exact path="/login">
             <LoginPage />
           </Route>
-          <Route path="/">
+          <Route exact path="/">
             <AddTaskPage />
+          </Route>
+          <Route exact path="/tasks">
+            <TasksPage />
           </Route>
         </Switch>
     </Router>

@@ -21,7 +21,6 @@ class Task
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="tasks")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"task_safe"})
      */
     private $employee;
 
@@ -65,11 +64,13 @@ class Task
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"task_safe"})
      */
     private $km_traveled;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"task_safe"})
      */
     private $activities_done;
 

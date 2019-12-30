@@ -171,8 +171,10 @@ export default function AddTaskPage() {
 			else {
 				if(data.status == "400")
 					setErrorContent(<p className="error">{data.message}</p>)
-				else
+				else {
 					setErrorContent("")
+					history.push('/tasks')
+				}
 
 				console.log(data)
 			}
@@ -248,7 +250,7 @@ export default function AddTaskPage() {
 	return (
 		<div className="container">
 			<div className="login_header">
-				<h1>ArteTech Login</h1>
+				<h1>ArteTech</h1>
 			</div>
 			<div className='card'>
 				<h2>Taak toevoegen</h2>

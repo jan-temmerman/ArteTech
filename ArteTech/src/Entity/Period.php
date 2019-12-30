@@ -16,46 +16,46 @@ class Period
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"period_safe"})
+     * @Groups({"period_safe", "for_task"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="date")
-     * @Groups({"period_safe"})
+     * @Groups({"period_safe", "for_task"})
      */
     private $startDate;
 
     /**
      * @ORM\Column(type="date")
-     * @Groups({"period_safe"})
+     * @Groups({"period_safe", "for_task"})
      */
     private $endDate;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"period_safe"})
+     * @Groups({"period_safe", "for_task"})
      */
     private $name;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\HourlyRate")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"period_safe"})
+     * @Groups({"period_safe", "for_task"})
      */
     private $hourlyRate;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\TransportRate")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"period_safe"})
+     * @Groups({"period_safe", "for_task"})
      */
     private $transportRate;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="periods")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"period_safe"})
+     * @Groups({"period_safe", "for_task"})
      */
     private $company;
 
