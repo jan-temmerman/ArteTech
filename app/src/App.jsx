@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.sass'
 import {
   BrowserRouter as Router,
@@ -10,9 +10,9 @@ import {
 import LoginPage from './pages/LoginPage'
 import AddTaskPage from './pages/AddTaskPage'
 import TasksPage from './pages/TasksPage'
+import TaskDetailPage from './pages/TaskDetailPage'
 
 function App() {
-
 	const [displayMobile, setDisplayMobile] = useState("none")
 
 	return (
@@ -20,7 +20,7 @@ function App() {
 			<div className="header">
 				<h1>ArteTech</h1>
 				<nav className="menu">
-					<Link to="/">Taken</Link> |
+					<Link to="/">Voltooide Taken</Link> |
 					<Link to="/addTask">Taak Toevoegen</Link> |
 					<Link to="/profile">Profiel</Link>
 				</nav>
@@ -30,7 +30,7 @@ function App() {
 			<div className="menu_mobile" style={{display: displayMobile}}>
 				<h1>Menu</h1>
 				<nav>
-					<Link onClick={() => setDisplayMobile("none")} to="/">Taken</Link> |
+					<Link onClick={() => setDisplayMobile("none")} to="/">Voltooide Taken</Link> |
 					<Link onClick={() => setDisplayMobile("none")} to="/addTask">Taak Toevoegen</Link> |
 					<Link onClick={() => setDisplayMobile("none")} to="/profile">Profiel</Link>
 				</nav>
@@ -41,6 +41,9 @@ function App() {
 			<Switch>
 				<Route exact path="/login">
 					<LoginPage />
+				</Route>
+				<Route exact path="/tasks/:id">
+					<TaskDetailPage />
 				</Route>
 				<Route exact path="/addTask">
 					<AddTaskPage />

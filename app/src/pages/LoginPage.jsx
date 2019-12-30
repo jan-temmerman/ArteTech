@@ -111,7 +111,7 @@ export default function LoginPage() {
 							type="password"
 							value={password}
 							onChange={handleInputChange}
-							autoComplete="current-password" />
+							autoComplete="password" />
 					</label>
 					<input className='button' type="submit" value="Sign in" />
 				</form>

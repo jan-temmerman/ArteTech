@@ -22,7 +22,7 @@ class Company
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"company_safe"})
+     * @Groups({"company_safe", "for_task"})
      */
     private $name;
 

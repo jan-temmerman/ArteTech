@@ -114,6 +114,11 @@ class ApiController extends AbstractController
         $pauseRepository = $this->getDoctrine()->getRepository(PauseLength::class);
         $pause = $pauseRepository->find($data['pause_id']);
 
+        if($data['materials_used'] == "")
+            $materialsUsed = "geen";
+        else
+            $materialsUsed = $data['materials_used'];
+
 
         $task->setEmployee($employee);
         $task->setPeriod($period);
@@ -122,7 +127,7 @@ class ApiController extends AbstractController
         $task->setEndTime(\DateTime::createFromFormat('Y-m-d H:i:s', $data['date'] . ' ' .$data['time']['end']));
         $task->setPauseLength($pause);
         $task->setActivitiesDone($data['activities_done']);
-        $task->setMaterialsUsed($data['materials_used']);
+        $task->setMaterialsUsed($materialsUsed);
         $task->setKmTraveled($data['km']);
 
         $entityManager = $this->getDoctrine()->getManager();
@@ -271,6 +276,42 @@ class ApiController extends AbstractController
 
         $jsonContent = $serializer->normalize(
             $tasks,
+            'json', ['groups' => ['task_safe', 'pause_safe', 'for_task', 'hourlyRate_safe', 'transportRate_safe']]
+        );
+
+        $jsonContent = json_encode($jsonContent);
+
+        return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("/api/tasks/getById", name="api_tasks_getById")
+     * @param Request $request
+     * @param SerializerInterface $serializer
+     * @return Response
+     * @throws AnnotationException
+     * @throws ExceptionInterface
+     * @method POST
+     */
+    public function getTaskById(Request $request, SerializerInterface $serializer)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $repository = $this->getDoctrine()->getRepository(Task::class);
+        $task = $repository->find($data['id']);
+
+        $classMetaDataFactory = new ClassMetadataFactory(
+            new AnnotationLoader(
+                new AnnotationReader()
+            )
+        );
+
+        $norm = [ new DateTimeNormalizer(), new ObjectNormalizer($classMetaDataFactory)];
+        $encoders = [new JsonEncoder()];
+        $serializer = new Serializer($norm, $encoders);
+
+        $jsonContent = $serializer->normalize(
+            $task,
             'json', ['groups' => ['task_safe', 'pause_safe', 'for_task', 'hourlyRate_safe', 'transportRate_safe']]
         );
 

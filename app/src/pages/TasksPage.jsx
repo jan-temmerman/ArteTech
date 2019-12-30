@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory } from "react-router-dom"
+import { useHistory, Link } from "react-router-dom"
+import Loader from 'react-loader-spinner'
 
 export default function TasksPage() {
 	const history = useHistory()
 
 	const [tasks, setTasks] = useState([])
+	const [isFetching, setIsFetching] = useState(true)
 	
 	useEffect(() => {
 		if(!localStorage.getItem('bearer') || !localStorage.getItem('user')) {
@@ -34,8 +36,10 @@ export default function TasksPage() {
 
 			if(data.code) 
 				handleBadJWT()
-			else
+			else {
 				setTasks(data)
+				setIsFetching(false)
+			}
 
 		})
 		.catch(error => console.error(error))
@@ -50,7 +54,7 @@ export default function TasksPage() {
 
 	const getTimeString = (datetimeString) => {
 		let time = new Date(datetimeString)
-		let timeString = time.getHours() + ':' + time.getMinutes()
+		let timeString = time.getUTCHours() + ':' + time.getMinutes()
 
 		return timeString
 	}
@@ -70,21 +74,34 @@ export default function TasksPage() {
 
 		if(last2dates[1] != last2dates[0])
 			content.push(
-				<h3 style={{marginBottom: 0,}} key={key + "a"}>{last2dates[1]}</h3>
+				<h3 key={key + "a"}>{last2dates[1]}</h3>
 			)
 
 		content.push(
-			<div key={key} className="task_container">
-				<p>{getTimeString(task.start_time)} - {getTimeString(task.end_time)}</p>
-				<p>{task.activities_done}</p>
-			</div>
+			<Link to={"/tasks/" + task.id} key={key} className="task_container">
+				<div>
+					<p>{getTimeString(task.start_time)} - {getTimeString(task.end_time)}</p>
+				</div>
+				<div>
+					<p>{task.activities_done} voor {task.period.company.name}</p>
+				</div>
+			</Link>
 		)
 	});
 
 	return (
 		<div className="container">
 			<div className='card'>
-				<h2>Taken</h2>
+				<h2>Voltooide Taken</h2>
+				<div style={{alignSelf: 'center'}}>
+					<Loader
+						type="Puff"
+						color="#bbbbbb"
+						height={50}
+						width={50}
+						visible={isFetching}
+					/>
+				</div>
 				{content}
 			</div>
 		</div>
