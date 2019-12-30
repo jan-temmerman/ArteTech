@@ -2,7 +2,7 @@
     display: flex
     align-self: center
     flex-direction: column
-    width: 30%
+    min-width: 30%
     background-color: #F7FAFF
     min-height: 200px
     color: black
@@ -11,7 +11,7 @@
     box-shadow: #c3c3c3 0 5px 10px
     margin: 40px
     margin-top: 100px
-    @include respond-to(small)
+    @include respond-to(medium)
         width: 80%
 
     h2
@@ -54,3 +54,8 @@
 
         .button:hover
             background-color: $secundary_green
+
+.task_container
+    border-top: 1px solid lightgrey
+    display: flex
+    justify-content: space-between

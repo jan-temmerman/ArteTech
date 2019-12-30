@@ -27,11 +27,10 @@ export default function AddTaskPage() {
 	const [endTime, setEndTime] = useState(new Date());	
 
 	useEffect(() => {
-		if(localStorage.getItem('bearer') == null) {
+		if(!localStorage.getItem('bearer') || !localStorage.getItem('user')) {
 			history.push('/login')
-		}
-
-		getAllPeriods()
+		} else
+			getAllPeriods()
 
 		return
 	}, [])
@@ -173,7 +172,7 @@ export default function AddTaskPage() {
 					setErrorContent(<p className="error">{data.message}</p>)
 				else {
 					setErrorContent("")
-					history.push('/tasks')
+					history.push('/')
 				}
 
 				console.log(data)
@@ -244,14 +243,13 @@ export default function AddTaskPage() {
 
 	const handleBadJWT = () => {
 		alert("Session timed out. Please log in.")
+		localStorage.removeItem('bearer')
+		localStorage.removeItem('user')
 		history.push('/login')
 	}
 
 	return (
 		<div className="container">
-			<div className="login_header">
-				<h1>ArteTech</h1>
-			</div>
 			<div className='card'>
 				<h2>Taak toevoegen</h2>
 				{errorContent}

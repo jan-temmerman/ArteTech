@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from "react-router-dom"
 
 export default function LoginPage() {
@@ -7,6 +7,12 @@ export default function LoginPage() {
     const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
 	const [errorContent, setErrorContent] = useState("")
+
+	useEffect(() => {
+		if(localStorage.getItem('bearer') && localStorage.getItem('user'))
+			history.push('/')
+		return
+	}, [])
 
 	const handleInputChange = (event) => {
 		const target = event.target
@@ -85,9 +91,6 @@ export default function LoginPage() {
 
 	return (
 		<div className="container">
-			<div className="login_header">
-				<h1>ArteTech Login</h1>
-			</div>
 			<div className='card'>
 				<h2>Please sign in</h2>
 				{errorContent}

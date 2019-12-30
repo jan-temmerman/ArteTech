@@ -1,0 +1,38 @@
+nav
+    align-self: center
+    display: flex
+    color: $main_light
+    align-items: center
+
+    a
+        color: $main_light
+        text-decoration: none
+        margin: 10px
+
+.menu
+    display: flex
+    @include respond-to(small)
+        display: none
+
+.menu_mobile
+    position: absolute
+    display: none
+    flex-direction: column
+    align-items: center
+    width: 100vw
+    height: 100vh
+    background-color: $main-light
+    color: $main-dark
+    z-index: 1
+    padding: 20px
+    @include respond-to(small)
+        display: none
+
+    nav
+        display: flex
+        flex-direction: column
+
+        a
+            text-decoration: none
+            color: $main_dark
+
