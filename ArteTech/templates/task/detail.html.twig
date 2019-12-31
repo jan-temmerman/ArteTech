@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+
+    <h1>{{ title }}</h1>
+
+    <div class="table-container">
+        <div>
+            <h2>Taak Details</h2>
+
+            <h3>Datum: </h3>
+            <p>{{ task.date|date("D d/m/Y") }}</p>
+            <p>{{ task.startTime|date("h:m") }} - {{ task.endTime|date("h:m") }}</p>
+            <p>{{ task.employee.firstname}} {{ task.employee.lastname}}</p>
+            <p>{{ task.period.company.name}}</p>
+            <p>{{ task.period.name}}</p>
+        </div>
+    </div>
+
+{% endblock %}

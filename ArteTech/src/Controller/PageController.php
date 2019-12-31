@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Task;
 use App\Entity\User;
 use App\Entity\UserStatus;
 use phpDocumentor\Reflection\Types\Object_;
@@ -31,15 +32,10 @@ class PageController extends AbstractController
      */
     public function users(Request $request)
     {
-        $users = "";
         $statuses = "";
         $isUnauthorized = false;
 
         if($this->isAdmin()) {
-
-            $repository = $this->getDoctrine()->getRepository(User::class);
-            $users = $repository->findAll();
-
             $repository = $this->getDoctrine()->getRepository(UserStatus::class);
             $statuses = $repository->findAll();
 
@@ -47,9 +43,8 @@ class PageController extends AbstractController
             $isUnauthorized = true;
 
         return $this->render('page/users.html.twig', [
-            'users' => $users,
             'statuses' => $statuses,
-            'title' => 'Users',
+            'title' => 'Gebruikers',
             'isUnauthorized' => $isUnauthorized,
         ]);
     }
@@ -61,7 +56,7 @@ class PageController extends AbstractController
     public function companies()
     {
         return $this->render('page/companies.html.twig', [
-            'title' => 'Companies',
+            'title' => 'Klanten',
             'isUnauthorized' => false,
         ]);
     }
@@ -73,7 +68,7 @@ class PageController extends AbstractController
     public function periods()
     {
         return $this->render('page/periods.html.twig', [
-            'title' => 'Periods',
+            'title' => 'Periodes',
             'isUnauthorized' => false,
         ]);
     }
@@ -84,8 +79,19 @@ class PageController extends AbstractController
      */
     public function tasks()
     {
+        $tasks = "";
+        $isUnauthorized = false;
+
+        if($this->isAdmin()) {
+            $repository = $this->getDoctrine()->getRepository(Task::class);
+            $tasks = $repository->findAll();
+
+        } else
+            $isUnauthorized = true;
+
         return $this->render('page/tasks.html.twig', [
-            'title' => 'Tasks',
+            'tasks' => $tasks,
+            'title' => 'Voltooide Taken',
             'isUnauthorized' => false,
         ]);
     }

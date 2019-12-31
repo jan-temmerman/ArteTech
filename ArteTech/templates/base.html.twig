@@ -10,10 +10,10 @@
     <body>
         <nav class="nav-container">
             <h1>Arte Tech</h1>
-            <a class="{{ app.request.get('_route') == 'users' ? 'active' }}" href="{{ path('users') }}">Users</a>
-            <a class="{{ app.request.get('_route') == 'companies' ? 'active' }}" href="{{ path('companies') }}">Companies</a>
-            <a class="{{ app.request.get('_route') == 'periods' ? 'active' }}" href="{{ path('periods') }}">Periods</a>
-            <a class="{{ app.request.get('_route') == 'tasks' ? 'active' }}" href="{{ path('tasks') }}">Tasks</a>
+            <a class="{{ app.request.get('_route') == 'users' ? 'active' }}" href="{{ path('users') }}">Gebruikers</a>
+            <a class="{{ app.request.get('_route') == 'companies' ? 'active' }}" href="{{ path('companies') }}">Klanten</a>
+            <a class="{{ app.request.get('_route') == 'periods' ? 'active' }}" href="{{ path('periods') }}">Opdrachten</a>
+            <a class="{{ app.request.get('_route') == 'tasks' ? 'active' }}" href="{{ path('tasks') }}">Voltooide Taken</a>
         </nav>
 
         <div class="safe-container">

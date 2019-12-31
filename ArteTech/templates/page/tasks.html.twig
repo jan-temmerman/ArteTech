@@ -6,7 +6,29 @@
 
     <h1>{{ title }}</h1>
 
-    <div class="content-container">
+    <div class="table-container">
+        <div>
+            <table>
+                <tr>
+                    <th>Datum</th>
+                    <th>Uren</th>
+                    <th>Werknemer</th>
+                    <th>Klant</th>
+                    <th>Opdracht</th>
+                    <th>Detail</th>
+                </tr>
+                {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.date|date("D d/m/Y") }}</td>
+                        <td>{{ task.startTime|date("h:m") }} - {{ task.endTime|date("h:m") }}</td>
+                        <td>{{ task.employee.firstname}} {{ task.employee.lastname}}</td>
+                        <td>{{ task.period.company.name}}</td>
+                        <td>{{ task.period.name}}</td>
+                        <td><a href="{{ path('users') }}">Meer...</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 
 {% endblock %}

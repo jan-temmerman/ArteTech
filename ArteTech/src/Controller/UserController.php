@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\HourlyRate;
+use App\Entity\TransportRate;
 use App\Entity\User;
 use App\Entity\UserStatus;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -61,6 +63,16 @@ class UserController extends AbstractController
                     'choice_label' => function ($status) {
                         return ucfirst($status->getStatus());
                     }])
+                ->add('hourly_rate', EntityType::class, [
+                    'class' => HourlyRate::class,
+                    'choice_label' => function ($hourlyRate) {
+                        return $hourlyRate->getPrice() . ' ' . $hourlyRate->getUnit();
+                    }])
+                ->add('transport_rate', EntityType::class, [
+                    'class' => TransportRate::class,
+                    'choice_label' => function ($transportRate) {
+                        return $transportRate->getPrice() . ' ' . $transportRate->getUnit();
+                    }])
                 ->add('save', SubmitType::class, ['label' => 'Save user'])
                 ->getForm();
 
@@ -82,7 +94,7 @@ class UserController extends AbstractController
 
         return $this->render('user/add.html.twig', [
             'form' => $form->createView(),
-            'title' => 'Add User',
+            'title' => 'Gebruiker Toevoegen',
             'isUnauthorized' => $isUnauthorized,
         ]);
     }

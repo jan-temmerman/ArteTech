@@ -25,6 +25,8 @@
     flex-direction: column
     padding: 0 20vw
 
+
+
 .content-container
     display: grid
     grid-template-columns: repeat(auto-fill, minmax(440px, 1fr))
@@ -40,3 +42,28 @@
 
         p
             margin-left: 20px
+
+.table-container
+    display: flex
+
+    div
+        background-color: $main_light
+        min-height: 200px
+        color: $main_dark
+        padding: 20px
+        border-radius: 8px
+        box-shadow: #c3c3c3 0px 5px 10px
+
+        table, th, td
+            border: 1px solid lightgrey
+            border-collapse: collapse
+
+        th, td
+            padding: 15px
+
+        th
+            text-align: left
+
+        p
+            margin-left: 20px
+

@@ -4,8 +4,10 @@
 
 {% block body %}
 
-    <h1>{{ title }}</h1>
-    <a class="button-add" href="{{ path('addUser') }}">Add a User</a>
+    <div class="heading_container">
+        <h1>{{ title }}</h1>
+        <a class="button-add" href="{{ path('addUser') }}">Gebruiker Toevoegen</a>
+    </div>
 
     <div class="content-container">
     {% for status in statuses %}
