@@ -43,21 +43,6 @@
             border: 2px solid #2784FF
             outline: none
 
-        .button
-            background-color: $main_button_green
-            padding: 10px 14px
-            border: none
-            border-radius: 3px
-            color: white
-            font-weight: bold
-            font-size: 14px
-            text-decoration: none
-            align-self: center
-            -webkit-appearance: none
-
-        .button:hover
-            background-color: $secundary_green
-
 .task_container
     border-top: 1px solid lightgrey
     display: flex
@@ -65,14 +50,31 @@
     flex-wrap: wrap
     text-decoration: none
     color: black
+    flex-direction: column
 
     div
         display: flex
-        min-width: 40%
-        margin-right: 10px
+        flex-wrap: wrap
 
         p
-            margin: 10px
+            display: flex
+            min-width: 40%
+            margin-right: 10px
 
 .task_container:hover
     background-color: lightgrey
+
+.button
+    background-color: $main_button_green
+    padding: 10px 14px
+    border: none
+    border-radius: 3px
+    color: white
+    font-weight: bold
+    font-size: 14px
+    text-decoration: none
+    align-self: center
+    -webkit-appearance: none
+
+.button:hover
+    background-color: $secundary_green

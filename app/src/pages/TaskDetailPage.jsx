@@ -81,14 +81,14 @@ export default function TasksPage() {
 
 	const getTimeString = (datetimeString) => {
 		let time = new Date(datetimeString)
-		let timeString = time.getUTCHours() + ':' + time.getMinutes()
+		let timeString = time.getUTCHours().toString().padStart(2, '0') + ':' + time.getMinutes().toString().padStart(2, '0')
 
 		return timeString
 	}
 
 	const getDateString = (datetimeString) => {
 		let date = new Date(datetimeString)
-		let dateString = date.getDate() + '/' + (date.getMonth() + 1)+ '/' + date.getFullYear()
+		let dateString = date.getDate().toString().padStart(2, '0') + '/' + (date.getMonth() + 1).toString().padStart(2, '0') + '/' + date.getFullYear().toString().padStart(2, '0')
 
 		return dateString
 	}

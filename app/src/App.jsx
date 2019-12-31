@@ -11,6 +11,7 @@ import LoginPage from './pages/LoginPage'
 import AddTaskPage from './pages/AddTaskPage'
 import TasksPage from './pages/TasksPage'
 import TaskDetailPage from './pages/TaskDetailPage'
+import ProfilePage from './pages/ProfilePage'
 
 function App() {
 	const [displayMobile, setDisplayMobile] = useState("none")
@@ -41,6 +42,9 @@ function App() {
 			<Switch>
 				<Route exact path="/login">
 					<LoginPage />
+				</Route>
+				<Route exact path="/profile">
+					<ProfilePage />
 				</Route>
 				<Route exact path="/tasks/:id">
 					<TaskDetailPage />
