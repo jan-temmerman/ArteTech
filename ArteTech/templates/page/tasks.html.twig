@@ -4,10 +4,13 @@
 
 {% block body %}
 
-    <h1>{{ title }}</h1>
+    <div class="heading_container">
+        <h1>{{ title }}</h1>
+        <a class="button-add" href="{{ path('add_task') }}">Taak Toevoegen</a>
+    </div>
 
     <div class="table-container">
-        <div>
+        <div class="card">
             <table>
                 <tr>
                     <th>Datum</th>
@@ -20,11 +23,11 @@
                 {% for task in tasks %}
                     <tr>
                         <td>{{ task.date|date("D d/m/Y") }}</td>
-                        <td>{{ task.startTime|date("h:m") }} - {{ task.endTime|date("h:m") }}</td>
+                        <td>{{ task.startTime|date("H:i") }} - {{ task.endTime|date("H:i") }}</td>
                         <td>{{ task.employee.firstname}} {{ task.employee.lastname}}</td>
                         <td>{{ task.period.company.name}}</td>
                         <td>{{ task.period.name}}</td>
-                        <td><a href="{{ path('users') }}">Meer...</a></td>
+                        <td><a href="{{ path('task_detail', {id: task.id}) }}">Meer...</a></td>
                     </tr>
                 {% endfor %}
             </table>

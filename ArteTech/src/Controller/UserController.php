@@ -34,7 +34,7 @@ class UserController extends AbstractController
      * @param UserPasswordEncoderInterface $encoder
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    public function index(Request $request, UserPasswordEncoderInterface $encoder)
+    public function add(Request $request, UserPasswordEncoderInterface $encoder)
     {
         $isUnauthorized = false;
 
@@ -42,8 +42,8 @@ class UserController extends AbstractController
             $user = new User();
 
             $form = $this->createFormBuilder($user)
-                ->add('firstName', TextType::class)
-                ->add('lastName', TextType::class)
+                ->add('firstName', TextType::class,  ['label' => 'Voornaam'])
+                ->add('lastName', TextType::class, ['label' => 'Achternaam'])
                 ->add('email', EmailType::class, [
                     'attr' => ['autocomplete' => 'off'],
                     'error_bubbling' => true,
@@ -64,11 +64,13 @@ class UserController extends AbstractController
                         return ucfirst($status->getStatus());
                     }])
                 ->add('hourly_rate', EntityType::class, [
+                    'label' => 'Uurloon',
                     'class' => HourlyRate::class,
                     'choice_label' => function ($hourlyRate) {
                         return $hourlyRate->getPrice() . ' ' . $hourlyRate->getUnit();
                     }])
                 ->add('transport_rate', EntityType::class, [
+                    'label' => 'Transport Vergoeding',
                     'class' => TransportRate::class,
                     'choice_label' => function ($transportRate) {
                         return $transportRate->getPrice() . ' ' . $transportRate->getUnit();

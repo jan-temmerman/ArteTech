@@ -86,6 +86,8 @@ class PageController extends AbstractController
             $repository = $this->getDoctrine()->getRepository(Task::class);
             $tasks = $repository->findAll();
 
+            $tasks = array_reverse($tasks);
+
         } else
             $isUnauthorized = true;
 

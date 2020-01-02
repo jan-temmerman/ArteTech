@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+
+    <h1>{{ title }}</h1>
+    <div class="form-container">
+        <h2>Vul De Velden In</h2>
+        {{ form(form, {'attr': {'autocomplete': 'disabled'}}) }}
+    </div>
+
+{% endblock %}

@@ -11,7 +11,7 @@
 
     <div class="content-container">
     {% for status in statuses %}
-        <div >
+        <div class="card">
             <h2>{{ status.status|capitalize }}s</h2>
             {% for user in status.users %}
                 <p>{{ user.firstName }} {{ user.lastName }}</p>

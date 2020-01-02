@@ -32,38 +32,34 @@
     grid-template-columns: repeat(auto-fill, minmax(440px, 1fr))
     grid-gap: 20px
 
-    div
-        background-color: $main_light
-        min-height: 200px
-        color: $main_dark
-        padding: 20px
-        border-radius: 8px
-        box-shadow: #c3c3c3 0px 5px 10px
-
-        p
-            margin-left: 20px
+    p
+        margin: 0
 
 .table-container
     display: flex
 
-    div
-        background-color: $main_light
-        min-height: 200px
-        color: $main_dark
-        padding: 20px
-        border-radius: 8px
-        box-shadow: #c3c3c3 0px 5px 10px
+    table, th, td
+        border: 1px solid lightgrey
+        border-collapse: collapse
 
-        table, th, td
-            border: 1px solid lightgrey
-            border-collapse: collapse
+    th, td
+        padding: 15px
 
-        th, td
-            padding: 15px
+    th
+        text-align: left
 
-        th
-            text-align: left
+    p
+        margin: 0
 
-        p
-            margin-left: 20px
+    h3
+        margin-bottom: 2px
+
+.card
+    background-color: $main_light
+    min-height: 200px
+    color: $main_dark
+    padding: 20px
+    border-radius: 8px
+    box-shadow: #c3c3c3 0px 5px 10px
+
 
