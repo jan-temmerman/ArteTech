@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Period;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Entity\UserStatus;
@@ -67,9 +68,22 @@ class PageController extends AbstractController
      */
     public function periods()
     {
+        $periods = "";
+        $isUnauthorized = false;
+
+        if($this->isAdmin()) {
+            $repository = $this->getDoctrine()->getRepository(Period::class);
+            $periods = $repository->findAll();
+
+            $periods = array_reverse($periods);
+
+        } else
+            $isUnauthorized = true;
+
         return $this->render('page/periods.html.twig', [
-            'title' => 'Periodes',
-            'isUnauthorized' => false,
+            'title' => 'Opdrachten',
+            'periods' => $periods,
+            'isUnauthorized' => $isUnauthorized,
         ]);
     }
 

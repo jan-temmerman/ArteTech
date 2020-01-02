@@ -18,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
@@ -77,8 +78,15 @@ class TaskController extends AbstractController
                 ->add('employee', EntityType::class, [
                     'label' => 'Werknemer',
                     'class' => User::class,
+                    'query_builder' => function (EntityRepository $er) {
+                        return $er->createQueryBuilder('u')
+                            ->orWhere('u.status = :employee OR u.status = :freelancer')
+                            ->setParameter('employee', 3)
+                            ->setParameter('freelancer', 4)
+                            ->orderBy('u.lastName', 'ASC');
+                    },
                     'choice_label' => function ($user) {
-                        return ucfirst($user->getFirstname()) . ' ' . ucfirst($user->getLastname());
+                        return ucfirst($user->getFirstname()) . ' ' . ucfirst($user->getLastname()) . ' - ' . ucfirst($user->getStatus()->getStatus());
                     }])
                 ->add('period', EntityType::class, [
                     'label' => 'Opdracht',
@@ -138,8 +146,15 @@ class TaskController extends AbstractController
                 ->add('employee', EntityType::class, [
                     'label' => 'Werknemer',
                     'class' => User::class,
+                    'query_builder' => function (EntityRepository $er) {
+                        return $er->createQueryBuilder('u')
+                            ->orWhere('u.status = :employee OR u.status = :freelancer')
+                            ->setParameter('employee', 3)
+                            ->setParameter('freelancer', 4)
+                            ->orderBy('u.lastName', 'ASC');
+                    },
                     'choice_label' => function ($user) {
-                        return ucfirst($user->getFirstname()) . ' ' . ucfirst($user->getLastname());
+                        return ucfirst($user->getFirstname()) . ' ' . ucfirst($user->getLastname()) . ' - ' . ucfirst($user->getStatus()->getStatus());
                     }])
                 ->add('period', EntityType::class, [
                     'label' => 'Opdracht',

@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+
+    <h1>{{ title }}</h1>
+
+    <div class="content-container">
+        <div class="card">
+            <div class="heading_container">
+                <h2>Opdracht Details</h2>
+                <a class="button-add" href="{{ path('edit_period', {id: period.id}) }}">Info Aanpassen</a>
+            </div>
+
+            <h3>Opdracht</h3>
+            <p>{{ period.name|capitalize }}</p>
+
+            <h3>Looptijd</h3>
+            <p>{{ period.startDate|date("d/m/Y") }} - {{ period.endDate|date("d/m/Y") }}</p>
+
+            <h3>Klant</h3>
+            <p>{{ period.company.name}}</p>
+        </div>
+        <div class="table-container">
+            <div class="card">
+                <table>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Uren</th>
+                        <th>Werknemer</th>
+                        <th>Klant</th>
+                        <th>Opdracht</th>
+                        <th>Details</th>
+                    </tr>
+                    {% for task in period.tasks %}
+                        <tr>
+                            <td>{{ task.date|date("D d/m/Y") }}</td>
+                            <td>{{ task.startTime|date("H:i") }} - {{ task.endTime|date("H:i") }}</td>
+                            <td>{{ task.employee.firstname}} {{ task.employee.lastname}}</td>
+                            <td>{{ task.period.company.name}}</td>
+                            <td>{{ task.period.name}}</td>
+                            <td><a href="{{ path('task_detail', {id: task.id}) }}">Meer...</a></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

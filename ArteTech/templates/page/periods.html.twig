@@ -4,9 +4,30 @@
 
 {% block body %}
 
-    <h1>{{ title }}</h1>
+    <div class="heading_container">
+        <h1>{{ title }}</h1>
+        <a class="button-add" href="{{ path('add_period') }}">Opdracht Toevoegen</a>
+    </div>
 
-    <div class="content-container">
+    <div class="table-container">
+        <div class="card">
+            <table>
+                <tr>
+                    <th>Opdracht</th>
+                    <th>Looptijd</th>
+                    <th>Klant</th>
+                    <th>Details</th>
+                </tr>
+                {% for period in periods %}
+                    <tr>
+                        <td>{{ period.name|capitalize }}</td>
+                        <td>{{ period.startDate|date("d/m/Y") }} - {{ period.endDate|date("d/m/Y") }}</td>
+                        <td>{{ period.company.name}}</td>
+                        <td><a href="{{ path('period_detail', {id: period.id}) }}">Meer...</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 
 {% endblock %}
