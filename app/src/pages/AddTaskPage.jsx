@@ -87,7 +87,13 @@ export default function AddTaskPage() {
 			if(new Date(entity.startDate) <= new Date() && new Date() <= new Date(entity.endDate)) {
 				switch(kind) {
 					case 'company':
-						activeEntities.push({value: entity.company.name, label: entity.company.name})
+						let double = false
+						activeEntities.forEach(element => {
+							if(element.value === entity.company.name)
+								double = true
+						});
+						if(!double)
+							activeEntities.push({value: entity.company.name, label: entity.company.name})
 						break
 
 					case 'period':
