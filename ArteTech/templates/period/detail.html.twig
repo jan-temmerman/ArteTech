@@ -21,6 +21,23 @@
 
             <h3>Klant</h3>
             <p>{{ period.company.name}}</p>
+
+            <h3>Uurloon</h3>
+            <p>{{ period.hourlyRate.price}} {{ period.hourlyRate.unit }}</p>
+
+            <h3>Transport Vergoeding</h3>
+            <p>{{ period.transportRate.price}} {{ period.transportRate.unit }}</p>
+
+            <h3>Totaal aantal uren gewerkt</h3>
+            <p>{{ sideInfo.totalHours }}</p>
+
+            <h3>Totaal aantal km te vergoeden</h3>
+            <p>{{ sideInfo.totalKm }} km</p>
+
+            <h3>Totale Prijs (op dit moment)</h3>
+            <p>€{{ sideInfo.totalPrice }}</p>
+
+            <a class="button-add" href="{{ path('period_detail_pdf', {id: period.id}) }}">Exporteer PDF</a>
         </div>
         <div class="table-container">
             <div class="card">
@@ -33,16 +50,17 @@
                         <th>Opdracht</th>
                         <th>Details</th>
                     </tr>
-                    {% for task in period.tasks %}
-                        <tr>
-                            <td>{{ task.date|date("D d/m/Y") }}</td>
-                            <td>{{ task.startTime|date("H:i") }} - {{ task.endTime|date("H:i") }}</td>
-                            <td>{{ task.employee.firstname}} {{ task.employee.lastname}}</td>
-                            <td>{{ task.period.company.name}}</td>
-                            <td>{{ task.period.name}}</td>
-                            <td><a href="{{ path('task_detail', {id: task.id}) }}">Meer...</a></td>
-                        </tr>
-                    {% endfor %}
+
+                        {% for task in period.tasks %}
+                            <tr>
+                                <td>{{ task.date|date("D d/m/Y") }}</td>
+                                <td>{{ task.startTime|date("H:i") }} - {{ task.endTime|date("H:i") }}</td>
+                                <td>{{ task.employee.firstname}} {{ task.employee.lastname}}</td>
+                                <td>{{ task.period.company.name}}</td>
+                                <td>{{ task.period.name}}</td>
+                                <td><a href="{{ path('task_detail', {id: task.id}) }}">Meer...</a></td>
+                            </tr>
+                        {% endfor %}
                 </table>
             </div>
         </div>

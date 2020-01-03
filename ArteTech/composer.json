@@ -5,6 +5,7 @@
         "php": "^7.2.5",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "dompdf/dompdf": "^0.8.3",
         "lexik/jwt-authentication-bundle": "^2.6",
         "nelmio/cors-bundle": "^2.0",
         "sensio/framework-extra-bundle": "^5.5",

@@ -10,6 +10,7 @@ use App\Entity\Task;
 use App\Entity\TransportRate;
 use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
+use phpDocumentor\Reflection\Types\Object_;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -49,9 +50,29 @@ class PeriodController extends AbstractController
 
         } else
             $isUnauthorized = true;
+
+        $difference = 0;
+        $totalKm = 0;
+        foreach ($period->getTasks() as $task) {
+            $time1 = strtotime($task->getStartTime()->format('H:i:s'));
+            $time2 = strtotime($task->getEndTime()->format('H:i:s'));
+            $difference += round(abs($time2 - $time1) / 3600, 2);
+
+            $totalKm += $task->getKmTraveled();
+        }
+
+        $totalPrice = $difference * $period->getHourlyRate()->getPrice();
+        $totalPrice += $totalKm * $period->getTransportRate()->getPrice();
+
+        $sideInfo = new Object_();
+        $sideInfo->totalKm = $totalKm;
+        $sideInfo->totalPrice = $totalPrice;
+        $sideInfo->totalHours = $difference;
+
         return $this->render('period/detail.html.twig', [
             'title' => 'Opdracht Details',
             'period' => $period,
+            'sideInfo' => $sideInfo,
             'isUnauthorized' => $isUnauthorized
         ]);
     }
