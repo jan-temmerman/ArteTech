@@ -11,7 +11,8 @@
             <div class="heading_container">
                 <h2>Account</h2>
                 {% if userStatus == 'admin'%}
-                <a class="button-add" href="{{ path('edit_user', {id: user.id}) }}">Info Aanpassen</a>
+                    <a class="button-add" href="{{ path('edit_user', {id: user.id}) }}">Info Aanpassen</a>
+                    <a class="button-remove" href="{{ path('deactivate_user', {id: user.id}) }}">Deactiveer</a>
                 {% endif %}
             </div>
             <div>

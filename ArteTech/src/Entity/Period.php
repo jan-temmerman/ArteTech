@@ -65,6 +65,11 @@ class Period
      */
     private $tasks;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isConfirmed;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
@@ -174,6 +179,18 @@ class Period
                 $task->setPeriod(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIsConfirmed(): ?bool
+    {
+        return $this->isConfirmed;
+    }
+
+    public function setIsConfirmed(bool $confirmed): self
+    {
+        $this->isConfirmed = $confirmed;
 
         return $this;
     }

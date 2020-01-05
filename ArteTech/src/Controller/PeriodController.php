@@ -71,24 +71,28 @@ class PeriodController extends AbstractController
             $period = $repository->find($id);
 
             $difference = 0;
+            $totalHours = 0;
             $totalKm = 0;
-            $multiplyer = 1;
+            $extraCosts = 0;
             foreach ($period->getTasks() as $task) {
                 $time1 = strtotime($task->getStartTime()->format('H:i:s'));
                 $time2 = strtotime($task->getEndTime()->format('H:i:s'));
-                $difference += round(abs($time2 - $time1) / 3600, 2);
+                $difference = round(abs($time2 - $time1) / 3600, 2);
+                $totalHours += $difference;
 
                 if($task->getDate()->format('D') === 'Sat')
-                    $multiplyer += 0.5;
+                    $extraCosts += 0.5 * ($difference * $period->getHourlyRate()->getPrice());
                 elseif($task->getDate()->format('D') === 'Sun')
-                    $multiplyer += 0.5;
-                elseif(round(abs($time2 - $time1) / 3600, 2) > 8)
-                    $multiplyer += 0.2;
+                    $extraCosts += 1 * ($difference * $period->getHourlyRate()->getPrice());
+                elseif(round(abs($time2 - $time1) / 3600, 2) > 8) {
+                    $extraHours = $difference - 8;
+                    $extraCosts += 0.2 * ($extraHours * $period->getHourlyRate()->getPrice());
+                }
 
                 $totalKm += $task->getKmTraveled();
             }
 
-            $totalPrice = $difference * $period->getHourlyRate()->getPrice() * $multiplyer;
+            $totalPrice = $totalHours * $period->getHourlyRate()->getPrice() + $extraCosts;
             $totalPrice += $totalKm * $period->getTransportRate()->getPrice();
 
             $sideInfo = new Object_();
@@ -151,6 +155,7 @@ class PeriodController extends AbstractController
                 $period = $form->getData();
 
                 $entityManager = $this->getDoctrine()->getManager();
+                $period->setIsConfirmed(true);
                 $entityManager->persist($period);
                 $entityManager->flush();
 
@@ -227,5 +232,46 @@ class PeriodController extends AbstractController
             'userStatus' => $this->getUserStatus(),
             'isUnauthorized' => $isUnauthorized,
         ]);
+    }
+
+    /**
+     * @Route("/periods/{id}/confirm", name="confirm_period")
+     * @param $id
+     * @return RedirectResponse|Response
+     */
+    public function confirm($id)
+    {
+        if($this->isAdmin()) {
+            $repository = $this->getDoctrine()->getRepository(Period::class);
+            $period = $repository->find($id);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $period->setIsConfirmed(true);
+            $entityManager->persist($period);
+            $entityManager->flush();
+
+            return $this->redirect("/periods/" . $id);
+        }
+        return $this->redirect("/periods/" . $id);
+    }
+
+    /**
+     * @Route("/periods/{id}/delete", name="delete_period")
+     * @param $id
+     * @return RedirectResponse|Response
+     */
+    public function delete($id)
+    {
+        if($this->isAdmin()) {
+            $repository = $this->getDoctrine()->getRepository(Period::class);
+            $period = $repository->find($id);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($period);
+            $entityManager->flush();
+
+            return $this->redirect("/periods");
+        }
+        return $this->redirect("/periods/" . $id);
     }
 }

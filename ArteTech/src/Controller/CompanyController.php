@@ -70,8 +70,9 @@ class CompanyController extends AbstractController
                     'class' => User::class,
                     'query_builder' => function (EntityRepository $er) {
                         return $er->createQueryBuilder('u')
-                            ->where('u.status = :client')
+                            ->andWhere('u.status = :client and u.isActive = :bool')
                             ->setParameter('client', 2)
+                            ->setParameter('bool', true)
                             ->orderBy('u.lastName', 'ASC');
                     },
                     'choice_label' => function ($user) {
@@ -153,5 +154,25 @@ class CompanyController extends AbstractController
             'userStatus' => $this->getUserStatus(),
             'isUnauthorized' => $isUnauthorized,
         ]);
+    }
+
+    /**
+     * @Route("/companies/{id}/delete", name="delete_company")
+     * @param $id
+     * @return RedirectResponse|Response
+     */
+    public function delete($id)
+    {
+        if($this->isAdmin()) {
+            $repository = $this->getDoctrine()->getRepository(Company::class);
+            $company = $repository->find($id);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($company);
+            $entityManager->flush();
+
+            return $this->redirect("/companies");
+        }
+        return $this->redirect("/companies/" . $id);
     }
 }

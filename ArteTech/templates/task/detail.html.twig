@@ -11,7 +11,8 @@
             <div class="heading_container">
                 <h2>Taak Details</h2>
                 {% if userStatus == 'admin'%}
-                <a class="button-add" href="{{ path('edit_task', {id: task.id}) }}">Info Aanpassen</a>
+                    <a class="button-add" href="{{ path('edit_task', {id: task.id}) }}">Info Aanpassen</a>
+                    <a class="button-remove" href="{{ path('delete_task', {id: task.id}) }}">Verwijder</a>
                 {% endif %}
             </div>
             <div>

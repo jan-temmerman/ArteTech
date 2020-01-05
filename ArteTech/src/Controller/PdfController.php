@@ -68,16 +68,28 @@ class PdfController extends AbstractController
         $dompdf = new Dompdf($pdfOptions);
 
         $difference = 0;
+        $totalHours = 0;
         $totalKm = 0;
+        $extraCosts = 0;
         foreach ($period->getTasks() as $task) {
             $time1 = strtotime($task->getStartTime()->format('H:i:s'));
             $time2 = strtotime($task->getEndTime()->format('H:i:s'));
-            $difference += round(abs($time2 - $time1) / 3600, 2);
+            $difference = round(abs($time2 - $time1) / 3600, 2);
+            $totalHours += $difference;
+
+            if($task->getDate()->format('D') === 'Sat')
+                $extraCosts += 0.5 * ($difference * $period->getHourlyRate()->getPrice());
+            elseif($task->getDate()->format('D') === 'Sun')
+                $extraCosts += 1 * ($difference * $period->getHourlyRate()->getPrice());
+            elseif(round(abs($time2 - $time1) / 3600, 2) > 8) {
+                $extraHours = $difference - 8;
+                $extraCosts += 0.2 * ($extraHours * $period->getHourlyRate()->getPrice());
+            }
 
             $totalKm += $task->getKmTraveled();
         }
 
-        $totalPrice = $difference * $period->getHourlyRate()->getPrice();
+        $totalPrice = $totalHours * $period->getHourlyRate()->getPrice() + $extraCosts;
         $totalPrice += $totalKm * $period->getTransportRate()->getPrice();
 
         $sideInfo = new Object_();

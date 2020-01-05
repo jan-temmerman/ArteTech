@@ -103,9 +103,11 @@ class TaskController extends AbstractController
                     'class' => User::class,
                     'query_builder' => function (EntityRepository $er) {
                         return $er->createQueryBuilder('u')
-                            ->orWhere('u.status = :employee OR u.status = :freelancer')
+                            ->where('u.isActive = :bool')
+                            ->andWhere('u.status = :employee OR u.status = :freelancer')
                             ->setParameter('employee', 3)
                             ->setParameter('freelancer', 4)
+                            ->setParameter('bool', true)
                             ->orderBy('u.lastName', 'ASC');
                     },
                     'choice_label' => function ($user) {
@@ -174,9 +176,11 @@ class TaskController extends AbstractController
                     'class' => User::class,
                     'query_builder' => function (EntityRepository $er) {
                         return $er->createQueryBuilder('u')
-                            ->orWhere('u.status = :employee OR u.status = :freelancer')
+                            ->where('u.isActive = :bool')
+                            ->andWhere('u.status = :employee OR u.status = :freelancer')
                             ->setParameter('employee', 3)
                             ->setParameter('freelancer', 4)
+                            ->setParameter('bool', true)
                             ->orderBy('u.lastName', 'ASC');
                     },
                     'choice_label' => function ($user) {
@@ -223,6 +227,26 @@ class TaskController extends AbstractController
             'userStatus' => $this->getUserStatus(),
             'isUnauthorized' => $isUnauthorized,
         ]);
+    }
+
+    /**
+     * @Route("/tasks/{id}/delete", name="delete_task")
+     * @param $id
+     * @return RedirectResponse|Response
+     */
+    public function delete($id)
+    {
+        if($this->isAdmin()) {
+            $repository = $this->getDoctrine()->getRepository(Task::class);
+            $task = $repository->find($id);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($task);
+            $entityManager->flush();
+
+            return $this->redirect("/tasks");
+        }
+        return $this->redirect("/tasks/" . $id);
     }
 
 }

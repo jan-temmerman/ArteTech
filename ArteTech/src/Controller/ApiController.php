@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Company;
+use App\Entity\HourlyRate;
 use App\Entity\PauseLength;
 use App\Entity\Period;
 use App\Entity\Task;
+use App\Entity\TransportRate;
 use App\Entity\User;
 use DateTimeZone;
 use Doctrine\Common\Annotations\AnnotationException;
@@ -318,5 +320,95 @@ class ApiController extends AbstractController
         $jsonContent = json_encode($jsonContent);
 
         return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("/api/hourlyRates/getAll", name="api_hourlyRates_getAll")
+     * @param SerializerInterface $serializer
+     * @return Response
+     */
+    public function getHourlyRates(SerializerInterface $serializer)
+    {
+        $repository = $this->getDoctrine()->getRepository(HourlyRate::class);
+        $hourlyRates = $repository->findAll();
+
+        $jsonContent = $serializer->serialize(
+            $hourlyRates,
+            'json', ['groups' => 'hourlyRate_safe']
+        );
+
+        return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("/api/transportRates/getAll", name="api_transportRates_getAll")
+     * @param SerializerInterface $serializer
+     * @return Response
+     */
+    public function getTransportRates(SerializerInterface $serializer)
+    {
+        $repository = $this->getDoctrine()->getRepository(TransportRate::class);
+        $transportRates = $repository->findAll();
+
+        $jsonContent = $serializer->serialize(
+            $transportRates,
+            'json', ['groups' => 'transportRate_safe']
+        );
+
+        return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("/api/rates/update", name="api_rates_update")
+     * @param Request $request
+     * @return Response
+     * @method POST
+     */
+    public function updateRates(Request $request)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $repository = $this->getDoctrine()->getRepository(User::class);
+        $user = $repository->find($data['employee_id']);
+
+        $repository = $this->getDoctrine()->getRepository(TransportRate::class);
+        $transportRate = $repository->find($data['transportRate_id']);
+
+        $repository = $this->getDoctrine()->getRepository(HourlyRate::class);
+        $hourlyRate = $repository->find($data['hourlyRate_id']);
+
+        $user->setHourlyRate($hourlyRate);
+        $user->setTransportRate($transportRate);
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        $response = new JsonResponse(array('status' => '201', 'message' => "Task successfully persisted."));
+
+        return new Response($response->getContent(), 201, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @Route("/api/users/getWorkStats", name="api_users_getWorkStats")
+     * @param Request $request
+     * @return Response
+     * @method POST
+     */
+    public function getWorkStats(Request $request)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $repository = $this->getDoctrine()->getRepository(User::class);
+        $user = $repository->find($data['employee_id']);
+
+        $difference = 0;
+        foreach ($user->getTasks() as $task) {
+            $time1 = strtotime($task->getStartTime()->format('H:i:s'));
+            $time2 = strtotime($task->getEndTime()->format('H:i:s'));
+            $difference += round(abs($time2 - $time1) / 3600, 2);
+        }
+
+        return new JsonResponse(array('hoursWorked' => $difference));
     }
 }

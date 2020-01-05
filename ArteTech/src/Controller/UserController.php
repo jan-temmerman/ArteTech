@@ -228,4 +228,25 @@ class UserController extends AbstractController
             'isUnauthorized' => $isUnauthorized,
         ]);
     }
+
+    /**
+     * @Route("/users/{id}/deactivate", name="deactivate_user")
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function deactivate($id)
+    {
+
+        if($this->isAdmin()) {
+            $repository = $this->getDoctrine()->getRepository(User::class);
+            $user = $repository->find($id);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $user->setIsActive(false);
+            $entityManager->persist($user);
+            $entityManager->flush();
+        }
+
+        return $this->redirect("/users");
+    }
 }

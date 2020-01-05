@@ -8,10 +8,12 @@
 
     <div class="content-container">
         <div class="card">
+            <h2 class="left-align">Opdracht Details</h2>
             <div class="heading_container">
-                <h2>Opdracht Details</h2>
+
                 {% if userStatus == 'admin'%}
-                <a class="button-add" href="{{ path('edit_period', {id: period.id}) }}">Info Aanpassen</a>
+                    <a class="button-add" href="{{ path('edit_period', {id: period.id}) }}">Info Aanpassen</a>
+                    <a class="button-remove" href="{{ path('delete_period', {id: period.id}) }}">Verwijder</a>
                 {% endif %}
             </div>
             <div>
@@ -38,9 +40,25 @@
 
                 <h3>Totale Prijs (op dit moment)</h3>
                 <p>€{{ sideInfo.totalPrice }}</p>
-            </div>
 
-            <a class="button-add" href="{{ path('period_detail_pdf', {id: period.id}) }}">Exporteer PDF</a>
+                <h3>Nagekeken en Bevestigd</h3>
+                {% if period.isConfirmed %}
+                <p>Ja</p>
+                {% else %}
+                <p>Nee</p>
+                {% endif %}
+            </div>
+            <div class="actions_container">
+                {% if userStatus == 'client'%}
+                {% if not period.isConfirmed %}
+                    <a class="button-add" href="{{ path('confirm_period', {id: period.id}) }}">Bevestig</a>
+                {% endif %}
+                {% endif %}
+                {% if userStatus == 'admin'%}
+                    <a class="button-add" href="{{ path('period_sendNotif', {id: period.id}) }}">Stuur Notificatie</a>
+                {% endif %}
+                <a class="button-add" href="{{ path('period_detail_pdf', {id: period.id}) }}">Exporteer PDF</a>
+            </div>
         </div>
         <div class="table-container">
             <div class="card">

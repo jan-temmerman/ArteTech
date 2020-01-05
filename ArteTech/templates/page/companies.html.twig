@@ -21,7 +21,12 @@
                     <tr>
                         <td>{{ company.name }}</td>
                         <td>{{ company.admin.firstname }} {{ company.admin.lastname }}</td>
-                        <td><a class="button-add" href="{{ path('edit_company', {id: company.id}) }}">Bijwerken</a></td>
+                        <td>
+                            <div>
+                                <a class="button-add" href="{{ path('edit_company', {id: company.id}) }}">Bijwerken</a>
+                                <a class="button-remove" href="{{ path('delete_company', {id: company.id}) }}">Verwijder</a>
+                            </div>
+                        </td>
                     </tr>
                 {% endfor %}
             </table>

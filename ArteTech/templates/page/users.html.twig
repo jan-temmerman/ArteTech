@@ -15,7 +15,9 @@
             <div class="users_container">
                 <h2>{{ status.status|capitalize }}s</h2>
                 {% for user in status.users %}
-                <a href="{{ path('user_detail', {id: user.id}) }}">{{ user.firstName }} {{ user.lastName }}</a>
+                    {% if user.isActive %}
+                        <a href="{{ path('user_detail', {id: user.id}) }}">{{ user.firstName }} {{ user.lastName }}</a>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
