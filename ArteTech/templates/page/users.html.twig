@@ -12,10 +12,12 @@
     <div class="content-container">
     {% for status in statuses %}
         <div class="card">
-            <h2>{{ status.status|capitalize }}s</h2>
-            {% for user in status.users %}
-                <p>{{ user.firstName }} {{ user.lastName }}</p>
-            {% endfor %}
+            <div class="users_container">
+                <h2>{{ status.status|capitalize }}s</h2>
+                {% for user in status.users %}
+                <a href="{{ path('user_detail', {id: user.id}) }}">{{ user.firstName }} {{ user.lastName }}</a>
+                {% endfor %}
+            </div>
         </div>
     {% endfor %}
     </div>

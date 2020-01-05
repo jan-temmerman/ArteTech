@@ -4,9 +4,28 @@
 
 {% block body %}
 
-    <h1>{{ title }}</h1>
+    <div class="heading_container">
+        <h1>{{ title }}</h1>
+        <a class="button-add" href="{{ path('add_company') }}">Klant Toevoegen</a>
+    </div>
 
-    <div class="content-container">
+    <div class="table-container--small">
+        <div class="card">
+            <table>
+                <tr>
+                    <th>Naam</th>
+                    <th>Admin</th>
+                    <th>Acties</th>
+                </tr>
+                {% for company in companies %}
+                    <tr>
+                        <td>{{ company.name }}</td>
+                        <td>{{ company.admin.firstname }} {{ company.admin.lastname }}</td>
+                        <td><a class="button-add" href="{{ path('edit_company', {id: company.id}) }}">Bijwerken</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 
 {% endblock %}

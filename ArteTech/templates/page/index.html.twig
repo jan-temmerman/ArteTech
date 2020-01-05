@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+
+    <div class="heading_container">
+        <h1>Home</h1>
+        <p>Welkom terug {{ user.firstname }}.</p>
+    </div>
+
+    <div class="content-container">
+        <div class="table-container">
+            <div class="card">
+                <h2 class="left-align">Nieuwste Opdrachten</h2>
+                <table>
+                    <tr>
+                        <th>Opdracht</th>
+                        <th>Looptijd</th>
+                        <th>Klant</th>
+                        <th>Details</th>
+                    </tr>
+                    {% for period in periods %}
+                        <tr>
+                            <td>{{ period.name|capitalize }}</td>
+                            <td>{{ period.startDate|date("d/m/Y") }} - {{ period.endDate|date("d/m/Y") }}</td>
+                            <td>{{ period.company.name}}</td>
+                            <td><a  class="button-add" href="{{ path('period_detail', {id: period.id}) }}">Meer...</a></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        {% if userStatus == 'admin'%}
+        <div class="table-container--small">
+            <div class="card">
+                <h2 class="left-align">Nieuwste Klanten</h2>
+                <table>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Admin</th>
+                        <th>Acties</th>
+                    </tr>
+                    {% for company in companies %}
+                        <tr>
+                            <td>{{ company.name }}</td>
+                            <td>{{ company.admin.firstname }} {{ company.admin.lastname }}</td>
+                            <td><a class="button-add" href="{{ path('edit_company', {id: company.id}) }}">Bijwerken</a></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        {% endif %}
+        <div class="table-container">
+            <div class="card">
+                <h2 class="left-align">Laatst Voltooide Taken</h2>
+                <table>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Uren</th>
+                        <th>Werknemer</th>
+                        <th>Klant</th>
+                        <th>Opdracht</th>
+                        <th>Details</th>
+                    </tr>
+
+                    {% for task in tasks %}
+                        <tr>
+                            <td>{{ task.date|date("D d/m/Y") }}</td>
+                            <td>{{ task.startTime|date("H:i") }} - {{ task.endTime|date("H:i") }}</td>
+                            <td>{{ task.employee.firstname}} {{ task.employee.lastname}}</td>
+                            <td>{{ task.period.company.name}}</td>
+                            <td>{{ task.period.name}}</td>
+                            <td><a class="button-add" href="{{ path('task_detail', {id: task.id}) }}">Meer...</a></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+
+

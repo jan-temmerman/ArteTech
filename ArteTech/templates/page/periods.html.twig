@@ -6,7 +6,9 @@
 
     <div class="heading_container">
         <h1>{{ title }}</h1>
+        {% if userStatus == 'admin'%}
         <a class="button-add" href="{{ path('add_period') }}">Opdracht Toevoegen</a>
+        {% endif %}
     </div>
 
     <div class="table-container">
@@ -23,7 +25,7 @@
                         <td>{{ period.name|capitalize }}</td>
                         <td>{{ period.startDate|date("d/m/Y") }} - {{ period.endDate|date("d/m/Y") }}</td>
                         <td>{{ period.company.name}}</td>
-                        <td><a href="{{ path('period_detail', {id: period.id}) }}">Meer...</a></td>
+                        <td><a  class="button-add" href="{{ path('period_detail', {id: period.id}) }}">Meer...</a></td>
                     </tr>
                 {% endfor %}
             </table>

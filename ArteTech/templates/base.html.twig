@@ -9,11 +9,17 @@
     {% if not isUnauthorized %}
     <body>
         <nav class="nav-container">
-            <h1>Arte Tech</h1>
-            <a class="{{ app.request.get('_route') == 'users' ? 'active' }}" href="{{ path('users') }}">Gebruikers</a>
-            <a class="{{ app.request.get('_route') == 'companies' ? 'active' }}" href="{{ path('companies') }}">Klanten</a>
-            <a class="{{ app.request.get('_route') == 'periods' ? 'active' }}" href="{{ path('periods') }}">Opdrachten</a>
-            <a class="{{ app.request.get('_route') == 'tasks' ? 'active' }}" href="{{ path('tasks') }}">Voltooide Taken</a>
+            <div>
+                <h1>Arte Tech</h1>
+                <a class="{{ app.request.get('_route') == 'home' ? 'active' }}" href="{{ path('home') }}">Home</a>
+                {% if userStatus == 'admin'%}
+                <a class="{{ app.request.get('_route') == 'users' ? 'active' }}" href="{{ path('users') }}">Gebruikers</a>
+                <a class="{{ app.request.get('_route') == 'companies' ? 'active' }}" href="{{ path('companies') }}">Klanten</a>
+                {% endif %}
+                <a class="{{ app.request.get('_route') == 'periods' ? 'active' }}" href="{{ path('periods') }}">Opdrachten</a>
+                <a class="{{ app.request.get('_route') == 'tasks' ? 'active' }}" href="{{ path('tasks') }}">Voltooide Taken</a>
+            </div>
+            <a class="button-add" href="{{ path('app_logout') }}">Logout</a>
         </nav>
 
         <div class="safe-container">
@@ -21,16 +27,14 @@
             {% block javascripts %}{% endblock %}
         </div>
     </body>
-    {% endif %}
-
-    {% if isUnauthorized%}
+    {% else %}
         <body>
             <div class="login_header">
                 <h1>ArteTech Login</h1>
             </div>
             <div class="unAuth-container">
                 <h1>Unauthorized</h1>
-                <p><a href="{{ path('app_login') }}">Login</a> as Admin to view this page.</p>
+                <p><a href="{{ path('app_logout') }}">Logout</a> and use an account with the authority to view this page.</p>
             </div>
         </body>
     {% endif %}

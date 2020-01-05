@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Company;
 use App\Entity\Period;
 use App\Entity\Task;
 use App\Entity\User;
@@ -28,12 +29,67 @@ class PageController extends AbstractController
             return false;
     }
 
+    private function isClient()
+{
+    $user = $this->getUser();
+    if($user) {
+        if ($user->getStatus()->getStatus() === 'client') {
+            return true;
+        } else
+            return false;
+    } else
+        return false;
+}
+
+    private function getUserStatus()
+    {
+        $user = $this->getUser();
+        if($user)
+            return $user->getStatus()->getStatus();
+        else
+            return "guest";
+    }
     /**
-     * @Route("/users", name="users")
-     * @param Request $request
+     * @Route("/", name="home")
      * @return Response
      */
-    public function users(Request $request)
+    public function index()
+    {
+        $isUnauthorized = false;
+        $tasks = "";
+        $companies = "";
+        $periods = "";
+
+        if($this->isAdmin()) {
+            $repository = $this->getDoctrine()->getRepository(Company::class);
+            $companies = $repository->findBy([], ['id' => 'DESC'], 5, null);
+        }
+
+        if($this->isAdmin() || $this->isClient()) {
+            $repository = $this->getDoctrine()->getRepository(Task::class);
+            $tasks = $repository->findBy([], ['date' => 'DESC'], 5, null);
+
+            $repository = $this->getDoctrine()->getRepository(Period::class);
+            $periods = $repository->findBy([], ['id' => 'DESC'], 5, null);
+        } else
+            $isUnauthorized = true;
+
+        return $this->render('page/index.html.twig', [
+            'title' => 'Gebruikers',
+            'tasks' => $tasks,
+            'companies' => $companies,
+            'periods' => $periods,
+            'user' => $this->getUser(),
+            'userStatus' => $this->getUserStatus(),
+            'isUnauthorized' => $isUnauthorized,
+        ]);
+    }
+
+    /**
+     * @Route("/users", name="users")
+     * @return Response
+     */
+    public function users()
     {
         $statuses = "";
         $isUnauthorized = false;
@@ -48,19 +104,8 @@ class PageController extends AbstractController
         return $this->render('page/users.html.twig', [
             'statuses' => $statuses,
             'title' => 'Gebruikers',
+            'userStatus' => $this->getUserStatus(),
             'isUnauthorized' => $isUnauthorized,
-        ]);
-    }
-
-    /**
-     * @Route("/companies", name="companies")
-     * @return Response
-     */
-    public function companies()
-    {
-        return $this->render('page/companies.html.twig', [
-            'title' => 'Klanten',
-            'isUnauthorized' => false,
         ]);
     }
 
@@ -73,7 +118,7 @@ class PageController extends AbstractController
         $periods = "";
         $isUnauthorized = false;
 
-        if($this->isAdmin()) {
+        if($this->isAdmin() || $this->isClient()) {
             $repository = $this->getDoctrine()->getRepository(Period::class);
             $periods = $repository->findAll();
 
@@ -85,6 +130,7 @@ class PageController extends AbstractController
         return $this->render('page/periods.html.twig', [
             'title' => 'Opdrachten',
             'periods' => $periods,
+            'userStatus' => $this->getUserStatus(),
             'isUnauthorized' => $isUnauthorized,
         ]);
     }
@@ -98,7 +144,7 @@ class PageController extends AbstractController
         $tasks = "";
         $isUnauthorized = false;
 
-        if($this->isAdmin()) {
+        if($this->isAdmin() || $this->isClient()) {
             $repository = $this->getDoctrine()->getRepository(Task::class);
             $tasks = $repository->findAll();
 
@@ -110,7 +156,34 @@ class PageController extends AbstractController
         return $this->render('page/tasks.html.twig', [
             'tasks' => $tasks,
             'title' => 'Voltooide Taken',
-            'isUnauthorized' => false,
+            'isUnauthorized' => $isUnauthorized,
+            'userStatus' => $this->getUserStatus()
+        ]);
+    }
+
+    /**
+     * @Route("/companies", name="companies")
+     * @return Response
+     */
+    public function companies()
+    {
+        $companies = "";
+        $isUnauthorized = false;
+
+        if($this->isAdmin()) {
+            $repository = $this->getDoctrine()->getRepository(Company::class);
+            $companies = $repository->findAll();
+
+            $companies = array_reverse($companies);
+
+        } else
+            $isUnauthorized = true;
+
+        return $this->render('page/companies.html.twig', [
+            'companies' => $companies,
+            'title' => 'Klanten',
+            'userStatus' => $this->getUserStatus(),
+            'isUnauthorized' => $isUnauthorized,
         ]);
     }
 }

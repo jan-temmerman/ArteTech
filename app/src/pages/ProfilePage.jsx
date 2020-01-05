@@ -36,10 +36,10 @@ export default function ProfilePage() {
 					<p>{user.status.status}</p>
 
 					<h3>Uurloon</h3>
-					<p>{user.hourlyRate}</p>
+					<p>{user.hourlyRate.price} {user.hourlyRate.unit}</p>
 
 					<h3>Transport Vergoeding</h3>
-					<p>{user.transportRate}</p>
+					<p>{user.transportRate.price} {user.transportRate.unit}</p>
 
 					<Link to="/login" onClick={() => logoutHanldler()} className='button'>
 						Logout

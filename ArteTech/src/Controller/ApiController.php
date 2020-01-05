@@ -72,7 +72,7 @@ class ApiController extends AbstractController
 
         $jsonContent = $serializer->serialize(
             $user,
-            'json', ['groups' => ['user_safe', 'status_safe', 'task_safe']]
+            'json', ['groups' => ['user_safe', 'status_safe', 'task_safe', 'transportRate_safe', 'hourlyRate_safe']]
         );
 
         return new Response($jsonContent, 200, ['Content-Type' => 'application/json']);

@@ -39,6 +39,27 @@ class TaskController extends AbstractController
             return false;
     }
 
+    private function isClient()
+    {
+        $user = $this->getUser();
+        if($user) {
+            if ($user->getStatus()->getStatus() === 'client') {
+                return true;
+            } else
+                return false;
+        } else
+            return false;
+    }
+
+    private function getUserStatus()
+    {
+        $user = $this->getUser();
+        if($user)
+            return $user->getStatus()->getStatus();
+        else
+            return "guest";
+    }
+
     /**
      * @Route("/tasks/{id}", name="task_detail")
      * @param $id
@@ -49,7 +70,7 @@ class TaskController extends AbstractController
         $task = "";
         $isUnauthorized = false;
 
-        if($this->isAdmin()) {
+        if($this->isAdmin() || $this->isClient()) {
             $repository = $this->getDoctrine()->getRepository(Task::class);
             $task = $repository->find($id);
 
@@ -58,6 +79,7 @@ class TaskController extends AbstractController
         return $this->render('task/detail.html.twig', [
             'title' => 'Taak Details',
             'task' => $task,
+            'userStatus' => $this->getUserStatus(),
             'isUnauthorized' => $isUnauthorized
         ]);
     }
@@ -70,8 +92,9 @@ class TaskController extends AbstractController
     public function add(Request $request)
     {
         $isUnauthorized = false;
+        $formView = "";
 
-        if($this->isAdmin()) {
+        if($this->isAdmin() || $this->isClient()) {
             $task = new Task();
 
             $form = $this->createFormBuilder($task)
@@ -119,12 +142,14 @@ class TaskController extends AbstractController
 
                 return $this->redirect("/tasks");
             }
+            $formView = $form->createView();
         } else
             $isUnauthorized = true;
 
         return $this->render('task/add.html.twig', [
-            'form' => $form->createView(),
+            'form' => $formView,
             'title' => 'Taak Toevoegen',
+            'userStatus' => $this->getUserStatus(),
             'isUnauthorized' => $isUnauthorized,
         ]);
     }
@@ -137,8 +162,9 @@ class TaskController extends AbstractController
     public function edit(Request $request, $id)
     {
         $isUnauthorized = false;
+        $formView = "";
 
-        if($this->isAdmin()) {
+        if($this->isAdmin() || $this->isClient()) {
             $repository = $this->getDoctrine()->getRepository(Task::class);
             $task = $repository->find($id);
 
@@ -187,12 +213,14 @@ class TaskController extends AbstractController
 
                 return $this->redirect("/tasks");
             }
+            $formView = $form->createView();
         } else
             $isUnauthorized = true;
 
         return $this->render('task/add.html.twig', [
-            'form' => $form->createView(),
+            'form' => $formView,
             'title' => 'Taak Bewerken',
+            'userStatus' => $this->getUserStatus(),
             'isUnauthorized' => $isUnauthorized,
         ]);
     }

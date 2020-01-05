@@ -22,6 +22,27 @@ class PdfController extends AbstractController
             return false;
     }
 
+    private function isClient()
+    {
+        $user = $this->getUser();
+        if($user) {
+            if ($user->getStatus()->getStatus() === 'client') {
+                return true;
+            } else
+                return false;
+        } else
+            return false;
+    }
+
+    private function getUserStatus()
+    {
+        $user = $this->getUser();
+        if($user)
+            return $user->getStatus()->getStatus();
+        else
+            return "guest";
+    }
+
     /**
      * @Route("/periods/{id}/pdf", name="period_detail_pdf")
      * @param $id
@@ -32,7 +53,7 @@ class PdfController extends AbstractController
         $period = "";
         $isUnauthorized = false;
 
-        if($this->isAdmin()) {
+        if($this->isAdmin() || $this->isClient()) {
             $repository = $this->getDoctrine()->getRepository(Period::class);
             $period = $repository->find($id);
 
@@ -69,6 +90,7 @@ class PdfController extends AbstractController
             'title' => 'Opdrachten',
             'period' => $period,
             'sideInfo' => $sideInfo,
+            'userStatus' => $this->getUserStatus(),
             'isUnauthorized' => $isUnauthorized,
         ]);
 
@@ -93,6 +115,7 @@ class PdfController extends AbstractController
             'title' => 'Opdracht Details',
             'period' => $period,
             'totalHours' => $difference,
+            'userStatus' => $this->getUserStatus(),
             'isUnauthorized' => $isUnauthorized
         ]);
     }

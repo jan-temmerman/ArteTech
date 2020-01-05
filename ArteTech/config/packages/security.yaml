@@ -37,6 +37,9 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
+            form_login:
+                default_target_path: home
+                always_use_default_target_path: true
             anonymous: lazy
             provider: users_provider
             guard:

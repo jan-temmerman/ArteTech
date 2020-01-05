@@ -34,6 +34,27 @@ class PeriodController extends AbstractController
             return false;
     }
 
+    private function isClient()
+    {
+        $user = $this->getUser();
+        if($user) {
+            if ($user->getStatus()->getStatus() === 'client') {
+                return true;
+            } else
+                return false;
+        } else
+            return false;
+    }
+
+    private function getUserStatus()
+    {
+        $user = $this->getUser();
+        if($user)
+            return $user->getStatus()->getStatus();
+        else
+            return "guest";
+    }
+
     /**
      * @Route("/periods/{id}", name="period_detail")
      * @param $id
@@ -43,36 +64,46 @@ class PeriodController extends AbstractController
     {
         $period = "";
         $isUnauthorized = false;
+        $sideInfo = "";
 
-        if($this->isAdmin()) {
+        if($this->isAdmin() || $this->isClient()) {
             $repository = $this->getDoctrine()->getRepository(Period::class);
             $period = $repository->find($id);
 
+            $difference = 0;
+            $totalKm = 0;
+            $multiplyer = 1;
+            foreach ($period->getTasks() as $task) {
+                $time1 = strtotime($task->getStartTime()->format('H:i:s'));
+                $time2 = strtotime($task->getEndTime()->format('H:i:s'));
+                $difference += round(abs($time2 - $time1) / 3600, 2);
+
+                if($task->getDate()->format('D') === 'Sat')
+                    $multiplyer += 0.5;
+                elseif($task->getDate()->format('D') === 'Sun')
+                    $multiplyer += 0.5;
+                elseif(round(abs($time2 - $time1) / 3600, 2) > 8)
+                    $multiplyer += 0.2;
+
+                $totalKm += $task->getKmTraveled();
+            }
+
+            $totalPrice = $difference * $period->getHourlyRate()->getPrice() * $multiplyer;
+            $totalPrice += $totalKm * $period->getTransportRate()->getPrice();
+
+            $sideInfo = new Object_();
+            $sideInfo->totalKm = $totalKm;
+            $sideInfo->totalPrice = $totalPrice;
+            $sideInfo->totalHours = $difference;
+
         } else
             $isUnauthorized = true;
-
-        $difference = 0;
-        $totalKm = 0;
-        foreach ($period->getTasks() as $task) {
-            $time1 = strtotime($task->getStartTime()->format('H:i:s'));
-            $time2 = strtotime($task->getEndTime()->format('H:i:s'));
-            $difference += round(abs($time2 - $time1) / 3600, 2);
-
-            $totalKm += $task->getKmTraveled();
-        }
-
-        $totalPrice = $difference * $period->getHourlyRate()->getPrice();
-        $totalPrice += $totalKm * $period->getTransportRate()->getPrice();
-
-        $sideInfo = new Object_();
-        $sideInfo->totalKm = $totalKm;
-        $sideInfo->totalPrice = $totalPrice;
-        $sideInfo->totalHours = $difference;
 
         return $this->render('period/detail.html.twig', [
             'title' => 'Opdracht Details',
             'period' => $period,
             'sideInfo' => $sideInfo,
+            'userStatus' => $this->getUserStatus(),
             'isUnauthorized' => $isUnauthorized
         ]);
     }
@@ -85,6 +116,7 @@ class PeriodController extends AbstractController
     public function add(Request $request)
     {
         $isUnauthorized = false;
+        $formView = "";
 
         if($this->isAdmin()) {
             $period = new Period();
@@ -124,12 +156,14 @@ class PeriodController extends AbstractController
 
                 return $this->redirect("/periods");
             }
+            $formView = $form->createView();
         } else
             $isUnauthorized = true;
 
         return $this->render('task/add.html.twig', [
-            'form' => $form->createView(),
+            'form' => $formView,
             'title' => 'Opdracht Toevoegen',
+            'userStatus' => $this->getUserStatus(),
             'isUnauthorized' => $isUnauthorized,
         ]);
     }
@@ -142,6 +176,7 @@ class PeriodController extends AbstractController
     public function edit(Request $request, $id)
     {
         $isUnauthorized = false;
+        $formView = "";
 
         if($this->isAdmin()) {
             $repository = $this->getDoctrine()->getRepository(Period::class);
@@ -182,12 +217,14 @@ class PeriodController extends AbstractController
 
                 return $this->redirect("/periods");
             }
+            $formView = $form->createView();
         } else
             $isUnauthorized = true;
 
         return $this->render('task/add.html.twig', [
-            'form' => $form->createView(),
+            'form' => $formView,
             'title' => 'Opdracht Bijwerken',
+            'userStatus' => $this->getUserStatus(),
             'isUnauthorized' => $isUnauthorized,
         ]);
     }

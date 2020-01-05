@@ -6,7 +6,9 @@
 
     <div class="heading_container">
         <h1>{{ title }}</h1>
+        {% if userStatus == 'admin'%}
         <a class="button-add" href="{{ path('add_task') }}">Taak Toevoegen</a>
+        {% endif %}
     </div>
 
     <div class="table-container">
@@ -27,7 +29,7 @@
                         <td>{{ task.employee.firstname}} {{ task.employee.lastname}}</td>
                         <td>{{ task.period.company.name}}</td>
                         <td>{{ task.period.name}}</td>
-                        <td><a href="{{ path('task_detail', {id: task.id}) }}">Meer...</a></td>
+                        <td><a  class="button-add" href="{{ path('task_detail', {id: task.id}) }}">Meer...</a></td>
                     </tr>
                 {% endfor %}
             </table>
