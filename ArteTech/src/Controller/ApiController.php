@@ -406,7 +406,7 @@ class ApiController extends AbstractController
         foreach ($user->getTasks() as $task) {
             $time1 = strtotime($task->getStartTime()->format('H:i:s'));
             $time2 = strtotime($task->getEndTime()->format('H:i:s'));
-            $difference += round(abs($time2 - $time1) / 3600, 2);
+            $difference += round(abs($time2 - $time1) / 3600, 0);
         }
 
         return new JsonResponse(array('hoursWorked' => $difference));

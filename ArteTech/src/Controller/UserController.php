@@ -135,6 +135,7 @@ class UserController extends AbstractController
                 $plainPassword = $user->getPassword();
                 $encoded = $encoder->encodePassword($user, $plainPassword);
                 $user->setPassword($encoded);
+                $user->setIsActive(true);
                 $entityManager->persist($user);
                 $entityManager->flush();
 

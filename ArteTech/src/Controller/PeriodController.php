@@ -241,7 +241,7 @@ class PeriodController extends AbstractController
      */
     public function confirm($id)
     {
-        if($this->isAdmin()) {
+        if($this->isClient()) {
             $repository = $this->getDoctrine()->getRepository(Period::class);
             $period = $repository->find($id);
 
